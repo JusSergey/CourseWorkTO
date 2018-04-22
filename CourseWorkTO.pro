@@ -53,7 +53,8 @@ SOURCES += \
     senderfile.cpp \
     Threads/Runnable.cpp \
     Threads/Thread.cpp \
-    Threads/ThreadPool.cpp
+    Threads/ThreadPool.cpp \
+    Threads/Runnable.cpp
 
 HEADERS += \
         widget.h \

@@ -10,4 +10,4 @@ public:
     virtual void run() {}
 };
 
-#endif
+#endif // RUNNABLE_H

@@ -6,14 +6,12 @@ Thread::Thread() :
     _isStopped(false),
     _isActive(true),
     _runnable(nullptr)
-
 {
-    _thrFuture = ( std::async(std::launch::async,
-                           [&](){ mainLoop(); }) );
+    _thrFuture = std::async(std::launch::async,
+                           [&](){ mainLoop(); });
 }
 
-void Thread::setRunnable(Runnable::Ptr &&runnable)
-{
+void Thread::setRunnable(Runnable::Ptr &&runnable) {
     _isUsed = true;
     _runnable = std::move(runnable);
 }
