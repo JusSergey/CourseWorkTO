@@ -39,16 +39,16 @@ void TCPClient::disconnectFromHost()
     setValidFalse();
 }
 
-void TCPClient::specifiedConfirmConnection(Buffer &buff, SocketFD &socket)
+void TCPClient::specifiedConfirmConnection(Buffer &, SocketFD &)
 {
 }
 
-void TCPClient::specifiedDisconnect(Buffer &buff, SocketFD &socket)
+void TCPClient::specifiedDisconnect(Buffer &, SocketFD &)
 {
     stop();
 }
 
-void TCPClient::specifiedTectConnection(Buffer &buff, SocketFD &socket)
+void TCPClient::specifiedTectConnection(Buffer &, SocketFD &socket)
 {
     socket.sendMessage("", TypeMsg::ConfirmConnection);
 }

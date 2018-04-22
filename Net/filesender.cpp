@@ -46,7 +46,7 @@ void FileSender::asyncSendFile(const std::string &nameOnRemoteMachine, const std
 
 CallbackRead FileSender::_makeCallbackRead()
 {
-    return [this] (Buffer buff, SocketFD sock) -> void {
+    return [this] (Buffer buff, SocketFD) -> void {
 
         Device reader(&buff);
         TypeFileMsg type;

@@ -7,7 +7,7 @@ ThreadPool::ThreadPool(size_t capacity)
       _stopping(false)
 {
     _threads.reserve(capacity);
-    for (int i = 0; i < capacity; ++i) {
+    for (size_t i = 0; i < capacity; ++i) {
         _threads.push_back(Thread::Ptr(new Thread()));
     }
 }

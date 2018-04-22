@@ -21,13 +21,13 @@ Widget::~Widget()
     delete ui;
 }
 
-void Widget::mousePressEvent(QMouseEvent *event)
+void Widget::mousePressEvent(QMouseEvent *)
 {
     lockedUpdateInfo = true;
     qDebug() << "mouse press";
 }
 
-void Widget::mouseReleaseEvent(QMouseEvent *event)
+void Widget::mouseReleaseEvent(QMouseEvent *)
 {
     lockedUpdateInfo = false;
     qDebug() << "mouse release";
