@@ -3,7 +3,8 @@
 #include <iostream>
 
 ThreadPool::ThreadPool(size_t capacity)
-    : _threads(0)
+    : _threads(0),
+      _stopping(false)
 {
     _threads.reserve(capacity);
     for (int i = 0; i < capacity; ++i) {
@@ -42,6 +43,7 @@ bool ThreadPool::start(Runnable::Ptr &&runObj) {
 }
 
 void ThreadPool::stopAllThreads() {
+    _stopping.store(true);
     for (Thread::Ptr &p : _threads)
         p->stopLoop();
 }
