@@ -1,6 +1,7 @@
 #ifndef THREAD_POOL_H
 #define THREAD_POOL_H
 
+#include <mutex>
 #include <vector>
 #include <cstddef>
 #include "Thread.h"
@@ -9,6 +10,7 @@
 
 class ThreadPool {
 private:
+    static ThreadPool *_defaultPool;
     std::vector<Thread::Ptr> _threads;
     std::atomic_bool _stopping;
 
@@ -26,6 +28,7 @@ public:
         const char *what() const throw() override { return _message.c_str(); }
     };
 
+    static ThreadPool *defaultPool();
     bool start(Runnable::Ptr &&runObj);
     bool isStopping() const { return _stopping; }
     void stopAllThreads();

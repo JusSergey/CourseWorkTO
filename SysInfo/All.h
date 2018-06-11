@@ -1,7 +1,7 @@
 #ifndef ALL_H
 #define ALL_H
 
-#include "StringUtilities.h"
+#include "../Utils/StringUtilities.h"
 #include "Subsystem.h"
 #include "SubsystemCPU.h"
 #include "SubsystemDMI.h"

@@ -15,17 +15,17 @@
 //constexpr auto PATH_AVAILABLE_FREQ = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies";
 //constexpr auto PATH_GENERAL_INFO = "/proc/cpuinfo";
 
-class SubsystemDMI : public Subsystem/*, public ActiveDev*/, public NoActiveDev
+class SubsystemDMI : public Subsystem/*, public ActiveDev*/
 {
     static SubsystemDMI *instance;
-    SubsystemDMI() = default;
+    SubsystemDMI() : Subsystem(DEVICE::DMI) {}
 
 public:
     // get once instance.
     inline static SubsystemDMI *inst() { return (instance == nullptr ? (instance = new SubsystemDMI) : instance) ; }
 
     // get structuring info for device
-    virtual ListInfoT getDeviceInfo() const override;
+    virtual ListStrVects getDeviceInfo() const override;
 
     string getPrintableInfo() const;
 

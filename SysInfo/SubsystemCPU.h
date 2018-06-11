@@ -15,10 +15,10 @@
 constexpr auto PATH_AVAILABLE_FREQ = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies";
 constexpr auto PATH_GENERAL_INFO = "/proc/cpuinfo";
 
-class SubsystemCPU : public Subsystem, public ActiveDev, public NoActiveDev
+class SubsystemCPU : public Subsystem, public ActiveDev
 {
     static SubsystemCPU *instance;
-    SubsystemCPU() = default;
+    SubsystemCPU() : Subsystem(DEVICE::CPU) {}
     static string cache_info;
 
 public:
@@ -40,7 +40,7 @@ public:
     }
 
     // get structuring info for device
-    virtual ListInfoT getDeviceInfo() const override;
+    virtual ListStrVects getDeviceInfo() const override;
 
     // get ball for device
     virtual TestResult test() override { return TestResult(); }

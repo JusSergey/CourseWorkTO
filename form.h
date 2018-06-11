@@ -2,7 +2,6 @@
 #define FORM_H
 
 #include <QWidget>
-#include "widget.h"
 
 namespace Ui {
 class Form;

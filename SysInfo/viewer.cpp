@@ -8,9 +8,9 @@ using namespace chrono;
 #include "SubsystemCPU.h"
 #include "SubsystemRAM.h"
 #include "SubsystemDMI.h"
-#include "StringUtilities.h"
+#include "../Utils/StringUtilities.h"
 
-int getMaxLen(const ListInfoT &lst) {
+int getMaxLen(const ListStringPair &lst) {
     size_t max = 0;
     for (const auto &l : lst)
         if (l.first.size() > max)

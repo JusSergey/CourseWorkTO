@@ -3,15 +3,17 @@
 
 #include <QtWidgets>
 #include "form.h"
-#include "widget.h"
+#include "SystemOverview.h"
+//#include "widget.h"
+#include "TestHardware.h"
 #include "testhw.h"
 #include "serverhw.h"
 
 class Forms {
 
     Form *form = nullptr;
-    Widget *widg = nullptr;
-    TestHW *thw  = nullptr;
+    SystemOverview *widg = nullptr;
+    TestHardware *thw  = nullptr;
     ServerHW *serv = nullptr;
     Forms() {
         form = nullptr;
@@ -25,8 +27,8 @@ public:
         return instance;
     }
     inline Form *getForm() const { return form; }
-    inline Widget *getWidget() const { return widg; }
-    inline TestHW *getTestHW() const { return thw; }
+    inline SystemOverview *getWidget() const { return widg; }
+    inline TestHardware *getTestHW() const { return thw; }
     inline ServerHW *getServerHW() const { return serv; }
 
     void showMenu() {
@@ -43,7 +45,7 @@ public:
     }
     void showConfigure() {
         if (widg == nullptr)
-            widg = new Widget();
+            widg = new SystemOverview();
 
         if (form)
             form->close();
@@ -55,7 +57,7 @@ public:
     }
     void showTestHW() {
         if (thw == nullptr)
-            thw = new TestHW();
+            thw = new TestHardware();
 
         if (form)
             form->close();

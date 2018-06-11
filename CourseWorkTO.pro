@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webenginewidgets
 
 TARGET = CourseWorkTO
 TEMPLATE = app
@@ -26,7 +26,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        widget.cpp \
         Net/buffer.cpp \
         Net/device.cpp \
         Net/filereceiver.cpp \
@@ -35,7 +34,6 @@ SOURCES += \
         Net/tcpclient.cpp \
         Net/tcpserver.cpp \
         Net/tcpsocket.cpp \
-        SysInfo/StringUtilities.cpp \
         SysInfo/Subsystem.cpp \
         SysInfo/SubsystemCPU.cpp \
         SysInfo/SubsystemDMI.cpp \
@@ -54,10 +52,16 @@ SOURCES += \
     Threads/Runnable.cpp \
     Threads/Thread.cpp \
     Threads/ThreadPool.cpp \
-    Threads/Runnable.cpp
+    Tests/Queen.cpp \
+    Tests/Test.cpp \
+    Tests/Zipping.cpp \
+    Utils/StringUtilities.cpp \
+    Utils/HtmlUtils.cpp \
+    basicgraphicswidget.cpp \
+    SystemOverview.cpp \
+    TestHardware.cpp
 
 HEADERS += \
-        widget.h \
         Net/buffer.h \
         Net/device.h \
         Net/filereceiver.h \
@@ -69,7 +73,6 @@ HEADERS += \
         Net/file.h \
         Net/net.h \
         Net/typedefs.h \
-        SysInfo/StringUtilities.h \
         SysInfo/Subsystem.h \
         SysInfo/SubsystemCPU.h \
         SysInfo/SubsystemDMI.h \
@@ -91,7 +94,19 @@ HEADERS += \
     Threads/Thread.h \
     Threads/ThreadPool.h \
     Threads/MultithreadingConstant.h \
-    Threads/All.h
+    Threads/All.h \
+    Tests/Queen.h \
+    Tests/DepsHeaders.h \
+    Tests/TestRunner.h \
+    Tests/Test.h \
+    Tests/Zipping.h \
+    utils.h \
+    Utils/StringUtilities.h \
+    Utils/HtmlUtils.h \
+    basicgraphicswidget.h \
+    SystemOverview.h \
+    types.h \
+    TestHardware.h
 
 FORMS += \
         widget.ui \
@@ -99,3 +114,6 @@ FORMS += \
     testhw.ui \
     serverhw.ui \
     senderfile.ui
+
+DISTFILES += \
+    TODO.txt

@@ -1,46 +1,54 @@
-#include "widget.h"
 #include "forms.h"
 #include <QApplication>
 
 #include "SysInfo/SubsystemFilesystem.h"
 
-#define _TEST
+#include "Tests/TestRunner.h"
 
-#ifdef _TEST
-
-#include "Threads/All.h"
-#include "mutex"
-static std::mutex _mutex;
+class Tst {
+public:
+    void startTest(){
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 3));
+    }
+};
+#include "Tests/Queen.h"
+#include "Tests/Zipping.h"
 
 class MyRun : public Runnable {
-    int _id;
 public:
-    MyRun(int id) : _id(id) {}
-    virtual void run() {
-        for (int i = 0; i < 100; ++i) {
-            Thread::sleep(500);
-            std::unique_lock<std::mutex> lock_mut(_mutex);
-            std::cout << _id << " " << i << std::endl;
-        }
+    virtual void run() override {
+        std::condition_variable cv;
+        TestRunner<ZipCompress>::ResultTest::Ptr result = TestRunner<ZipCompress>::startInNewThread(cv);
+        std::mutex m;
+        std::unique_lock<std::mutex> ul(m);
+        while (!result->finished)
+            cv.wait(ul);
+
+        std::cout << "complete" << std::endl;
     }
 };
 
-int main() {
-    ThreadPool pool;
-    pool.start(std::move(Runnable::Ptr(new MyRun(1))));
-    pool.start(std::move(Runnable::Ptr(new MyRun(2))));
-    pool.start(std::move(Runnable::Ptr(new MyRun(3))));
-    pool.start(std::move(Runnable::Ptr(new MyRun(4))));
-    pool.waitAll();
+
+void start_new_thr(){
+    ThreadPool::defaultPool()->start(Runnable::Ptr(new MyRun));
 }
 
-#else
+#include "utils.h"
+#include "SysInfo/SubsystemCPU.h"
+#include "SysInfo/SubsystemDMI.h"
+#include "SysInfo/SubsystemRAM.h"
+#include "SysInfo/SubsystemGPU.h"
+#include "Utils/HtmlUtils.h"
+#include "SystemOverview.h"
+#include "TestHardware.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
     Forms::inst()->showMenu();
+    //auto testHW = new TestHardware;
+    //testHW->show();
 
     return a.exec();
 }
-#endif

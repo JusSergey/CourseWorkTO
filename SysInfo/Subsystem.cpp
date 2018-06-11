@@ -1,5 +1,6 @@
 #include "Subsystem.h"
-#include "StringUtilities.h"
+#include "../Utils/StringUtilities.h"
+#include "../Utils/HtmlUtils.h"
 #include <fstream>
 #include <cstring>
 #include <chrono>
@@ -9,7 +10,7 @@ using std::chrono::steady_clock;
 using std::chrono::duration_cast;
 using std::chrono::milliseconds;
 
-Subsystem::Subsystem()
+Subsystem::Subsystem(DEVICE devType) : dev(devType)
 {
 
 }
@@ -24,7 +25,18 @@ struct sysinfo Subsystem::getGlobalInfo()
     return sys;
 }
 
-string Subsystem::getPrintableInfo(const ListInfoT &src, const StringSet &filter) const
+string Subsystem::getHTMLCode() const
+{
+    HtmlUtils::InfoGenerateFile inpuInfo;
+    inpuInfo.border_width = 1;
+    inpuInfo.collapse_border = true;
+    inpuInfo.data = getDeviceInfo();
+    inpuInfo.headTitle = {"first", "second"};
+    inpuInfo.pageTitle = "DEF_PG_TLT";
+    return HtmlUtils::createAndGetHtmlPage(inpuInfo);
+}
+
+string Subsystem::getPrintableInfo(const ListStrVects &src, const StringSet &filter) const
 {
     auto callbackIsPrintable = [&filter] (const string &condition) -> bool {
         return (filter.find(condition) != filter.end() || filter.empty());
@@ -33,22 +45,25 @@ string Subsystem::getPrintableInfo(const ListInfoT &src, const StringSet &filter
     // finder maxlen str
     int maxlen = 0;
     for (const auto &pairline : src)
-        if (pairline.first.size() > maxlen)
-            maxlen = pairline.first.size();
+        if (pairline.front().size() > maxlen)
+            maxlen = pairline.front().size();
 
     string spaces;
     for (int i = 0; i < maxlen; i++)
         spaces += ' ';
 
     string result;
-    for (const auto &pairline : src) {
-        if (callbackIsPrintable(pairline.first)) {
-            if (pairline.first == "processor")
+    for (const auto &strsVec : src) {
+        if (callbackIsPrintable(strsVec[0])) {
+            if (strsVec[0] == "processor")
                 result += '\n';
-            result += pairline.first;
-            result.append(spaces.begin(), spaces.begin() + (maxlen-pairline.first.size()+1));
-            result += " : ";
-            result += (pairline.second + '\n');
+            result += strsVec[0];
+            result.append(spaces.begin(), spaces.begin() + (maxlen-strsVec[0].size()+1));
+            for (int i = 1; i < strsVec.size(); i++) {
+                result += " : ";
+                result += (strsVec[i] + '\n');
+            }
+
         }
     }
 
@@ -63,9 +78,9 @@ string::size_type getPosNoValidSymbol(const string &src, int start, int step, ch
     return string::npos;
 }
 
-ListInfoT Subsystem::getStructureInfo(const string &src) const
+ListStrVects Subsystem::getStructureInfo(const string &src) const
 {
-    ListInfoT listinfo;
+    ListStrVects listinfo;
 
     StringList lines = StringUtil::cropToStrings(src, '\n');
 
@@ -88,7 +103,7 @@ ListInfoT Subsystem::getStructureInfo(const string &src) const
 
     }
 
-    return std::move(listinfo);
+    return listinfo;
 }
 
 using pos_type = ifstream::pos_type;

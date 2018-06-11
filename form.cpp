@@ -17,7 +17,7 @@ Form::~Form()
 void Form::on_buttonExit_clicked()
 {
     Forms::inst()->getServerHW()->stopServer();
-    exit(0);
+    QApplication::exit(0);
 }
 
 void Form::on_buttonConfigure_clicked()

@@ -3,9 +3,10 @@
 
 #include "Subsystem.h"
 
-class SubsystemNet : public Subsystem {
+class SubsystemNet : public Subsystem
+{
     static SubsystemNet *instance;
-    SubsystemNet() = default;
+    SubsystemNet() : Subsystem(DEVICE::NETWORK) {}
     static std::string info;
 
 public:

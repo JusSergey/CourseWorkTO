@@ -25,11 +25,15 @@ private slots:
 
 private:
     Ui::TestHW *ui;
+    QTimer *timer;
 
 private:
     std::string testCPU();
     std::string testRAM();
     std::string testHARW_DRIVE();
+
+protected slots:
+    void slotCheckCompleteTests();
 };
 
 #endif // TESTHW_H

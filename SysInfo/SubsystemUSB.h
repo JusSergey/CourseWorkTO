@@ -3,10 +3,10 @@
 #include "Subsystem.h"
 #include <string>
 
-class SubsystemUSB : public Subsystem,  public NoActiveDev
+class SubsystemUSB : public Subsystem
 {
     static SubsystemUSB *instance;
-    SubsystemUSB() = default;
+    SubsystemUSB() : Subsystem(DEVICE::USB) {}
     static std::string info;
 
 public:
@@ -22,12 +22,12 @@ public:
     }
 
     // get structuring info for device
-    virtual ListInfoT getDeviceInfo() const override {
-        return ListInfoT();
+    virtual ListStrVects getDeviceInfo() const override {
+        return getStructureInfo(getPrintableInfo());
     }
 
     virtual string getPrintableInfo() const {
-        return info;
+        return SubsystemUSB::info;
     }
 };
 

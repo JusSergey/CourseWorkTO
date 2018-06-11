@@ -5,7 +5,7 @@
 class SubsystemFilesystem : public ActiveDev, public Subsystem
 {
     static SubsystemFilesystem *instance;
-    SubsystemFilesystem() = default;
+    SubsystemFilesystem() : Subsystem(DEVICE::HARD_DRIVE) {}
 
 private:
     string readDeviceInfo();

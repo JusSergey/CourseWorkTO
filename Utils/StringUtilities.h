@@ -5,9 +5,7 @@
 #include <string>
 #include <list>
 #include <sstream>
-
-using StringList = std::list<std::string>;
-
+#include "types.h"
 
 template <typename T = int>
 class Number {
@@ -31,11 +29,13 @@ public:
 class StringUtil
 {
 public:
+    static StringVector strListToStrVec(const StringList &strList);
     static StringList cropToStrings(const std::string &src, char delim);
     static std::string deleteSymbols(const std::string &src, const std::string del);
     static std::string deleteAlphas(const std::string &src);
     static std::string deleteSpaces(const std::string &src);
     static std::string deleteNums(const std::string &src);
+    static std::string getWord(const std::string &src, size_t pos, const std::string &limitsChars);
 
     static std::string resize(const std::string &src, size_t sz, char aggregate = ' ');
 

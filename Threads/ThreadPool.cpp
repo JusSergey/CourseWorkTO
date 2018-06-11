@@ -2,6 +2,8 @@
 #include "MultithreadingConstant.h"
 #include <iostream>
 
+ThreadPool *ThreadPool::_defaultPool(nullptr);
+
 ThreadPool::ThreadPool(size_t capacity)
     : _threads(0),
       _stopping(false)
@@ -31,6 +33,14 @@ ThreadPool::~ThreadPool() {
     waitAll();
 }
 
+ThreadPool *ThreadPool::defaultPool()
+{
+    if (!_defaultPool)
+        _defaultPool = new ThreadPool();
+
+    return _defaultPool;
+}
+
 bool ThreadPool::start(Runnable::Ptr &&runObj) {
     try {
         getFreeThread()->setRunnable(std::move(runObj));
@@ -49,11 +59,9 @@ void ThreadPool::stopAllThreads() {
 }
 
 void ThreadPool::waitAll() {
-    while (true) {
-        Thread::sleep(DELAY_THREAD_MSEC);
-        for (Thread::Ptr &p : _threads)
-            if (!p->isStopped())
-                continue;
-        break;
-    }
+    repeat:
+    Thread::sleep(DELAY_THREAD_MSEC);
+    for (Thread::Ptr &p : _threads)
+        if (!p->isStopped())
+            goto repeat;
 }

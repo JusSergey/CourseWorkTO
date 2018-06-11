@@ -3,10 +3,10 @@
 
 #include "Subsystem.h"
 
-class SubsystemGPU : public Subsystem,  public NoActiveDev
+class SubsystemGPU : public Subsystem
 {
     static SubsystemGPU *instance;
-    SubsystemGPU() = default;
+    SubsystemGPU() : Subsystem(DEVICE::GPU) {}
     static std::string info;
 
 public:
@@ -22,7 +22,7 @@ public:
     }
 
     // get structuring info for device
-    virtual ListInfoT getDeviceInfo() const override;
+    virtual ListStrVects getDeviceInfo() const override;
 
     // get ball for device
 //    virtual double test() override;

@@ -51,12 +51,12 @@ std::string SubsystemDMI::getDateBios() const
 }
 
 
-ListInfoT SubsystemDMI::getDeviceInfo() const {
+ListStrVects SubsystemDMI::getDeviceInfo() const {
     return {
-        std::make_pair(string("bios_vendor"),   string(getVendorBIOS())),
-        std::make_pair(string("bios_version"),  string(getVersionBIOS())),
-        std::make_pair(string("board_version"), string(getBoardVersion())),
-        std::make_pair(string("product_name"),  string(getProductName())),
-        std::make_pair(string("bios_date"),     string(getDateBios()))
+        {string("bios_vendor"),   string(getVendorBIOS())},
+        {string("bios_version"),  string(getVersionBIOS())},
+        {string("board_version"), string(getBoardVersion())},
+        {string("product_name"),  string(getProductName())},
+        {string("bios_date"),     string(getDateBios())}
     };
 }

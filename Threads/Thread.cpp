@@ -2,10 +2,11 @@
 #include "MultithreadingConstant.h"
 
 Thread::Thread() :
+    _runnable(nullptr),
     _isUsed(false),
     _isStopped(false),
-    _isActive(true),
-    _runnable(nullptr)
+    _isActive(true)
+
 {
     _thrFuture = std::async(std::launch::async,
                            [&](){ mainLoop(); });

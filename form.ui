@@ -10,6 +10,18 @@
     <height>334</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>351</width>
+    <height>334</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>351</width>
+    <height>334</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Menu</string>
   </property>

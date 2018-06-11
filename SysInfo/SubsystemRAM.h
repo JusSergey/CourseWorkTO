@@ -8,7 +8,7 @@ constexpr auto PATH_MEMORY_INFO = "/proc/meminfo";
 class SubsystemRAM : public Subsystem, public ActiveDev
 {
     static SubsystemRAM *instance;
-    SubsystemRAM() = default;
+    SubsystemRAM() : Subsystem(DEVICE::RAM){}
     static string info;
 
 public:
@@ -16,14 +16,13 @@ public:
     inline static SubsystemRAM *inst() {
         if (instance == nullptr) {
             instance = new SubsystemRAM;
-
-
         }
         return instance;
     }
 
     // get formatting info for `cout'
-    virtual string getPrintableInfo() const;
+    virtual string getPrintableInfo() const override;
+    virtual ListStrVects getDeviceInfo() const override;
 
     virtual TestResult test();
     double testWrite();

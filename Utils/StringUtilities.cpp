@@ -1,15 +1,24 @@
 #include "StringUtilities.h"
 using std::string;
 
+StringVector StringUtil::strListToStrVec(const StringList &strList)
+{
+    StringVector strVec;
+    strVec.insert(strVec.end(), strList.begin(), strList.end());
+    return strVec;
+}
+
 StringList StringUtil::cropToStrings(const string &src, char delim)
 {
     StringList strList;
     string tmp;
 
     for(char ch : src) {
-        if (ch == delim && !tmp.empty()) {
-            strList.push_back(tmp);
-            tmp.clear();
+        if (ch == delim) {
+            if (!tmp.empty()) {
+                strList.push_back(tmp);
+                tmp.clear();
+            }
         }
         else tmp += ch;
     }
@@ -18,7 +27,7 @@ StringList StringUtil::cropToStrings(const string &src, char delim)
         strList.push_back(tmp);
     }
 
-    return (strList);
+    return strList;
 }
 
 std::string StringUtil::deleteSymbols(const std::string &src, const std::string del)
@@ -48,6 +57,36 @@ std::string StringUtil::deleteNums(const std::string &src)
     return std::move(forEach(src, [](char ch){ return (ch < '0' || ch > '9'); } ));
 }
 
+std::string StringUtil::getWord(const std::string &src, size_t pos, const std::string &limitsChars)
+{
+    auto isContained = [&](char ch, const std::string &findList) -> bool {
+        for (char symbol : findList)
+            if (symbol == ch)
+                return true;
+
+        return false;
+    };
+
+    size_t minpos = -1, maxpos = src.size();
+
+    for (auto &rval : { std::pair<size_t &, int>(minpos, -1),
+                        std::pair<size_t &, int>(maxpos,  1)})
+    {
+        size_t limit = rval.second < 0 ? -1 : src.size();
+        for (size_t currPos = pos; currPos != limit; currPos--) {
+            if (!isContained(src[pos], limitsChars)) {
+                rval.first = currPos;
+                break;
+            }
+        }
+    }
+
+    //minpos = (minpos == -1 ? 0 : minpos);
+    //maxpos = (maxpos == -1 ? src.size()-1 : maxpos);
+
+    return src.substr(minpos+1, maxpos-1);
+}
+
 std::string StringUtil::resize(const std::string &src, size_t sz, char aggregate)
 {
     if (src.size() >= sz) {
@@ -55,8 +94,9 @@ std::string StringUtil::resize(const std::string &src, size_t sz, char aggregate
     }
     else {
         string res(src);
-        for (int i = src.size(); i < sz; i++)
+        for (int i = src.size(); i < sz; i++) {
             res += aggregate;
+        }
         return res;
     }
 }

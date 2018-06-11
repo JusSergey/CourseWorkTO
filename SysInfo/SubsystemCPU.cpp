@@ -1,5 +1,5 @@
 #include "SubsystemCPU.h"
-#include "StringUtilities.h"
+#include "../Utils/StringUtilities.h"
 #include <iostream>
 #include <chrono>
 //using std::chrono;
@@ -7,7 +7,7 @@
 SubsystemCPU* SubsystemCPU::instance = nullptr;
 string SubsystemCPU::cache_info;
 
-ListInfoT SubsystemCPU::getDeviceInfo() const
+ListStrVects SubsystemCPU::getDeviceInfo() const
 {
     return getStructureInfo(_getDataFromFile(PATH_GENERAL_INFO));
 }

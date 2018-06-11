@@ -5,17 +5,25 @@
 
 TestHW::TestHW(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::TestHW)
+    ui(new Ui::TestHW),
+    timer(new QTimer(this))
 {
     ui->setupUi(this);
     QFont f("monospace");
     f.setPixelSize(16);
     ui->textEdit->setFont(f);
+
+    connect(timer, SIGNAL(timeout()), this, SLOT(slotCheckCompleteTests()));
+    timer->start(300);
 }
 
 TestHW::~TestHW()
 {
     delete ui;
+}
+
+void TestHW::slotCheckCompleteTests() {
+    std::cout << "." << std::endl;
 }
 
 void TestHW::on_buttonStart_clicked()
@@ -74,7 +82,7 @@ std::string TestHW::testCPU()
 
     return result;
 }
-// 0960743128
+
 std::string TestHW::testRAM()
 {
     SubsystemRAM *ram = SubsystemRAM::inst();

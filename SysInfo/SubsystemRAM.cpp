@@ -1,5 +1,5 @@
 #include "SubsystemRAM.h"
-#include "StringUtilities.h"
+#include "../Utils/StringUtilities.h"
 
 string SubsystemRAM::info;
 
@@ -15,6 +15,11 @@ std::string SubsystemRAM::getPrintableInfo() const
         info = info.substr(info.find("*-memory"));
     }
     return info;
+}
+
+ListStrVects SubsystemRAM::getDeviceInfo() const
+{
+    return getStructureInfo(getPrintableInfo());
 }
 
 ActiveDev::TestResult SubsystemRAM::test()
