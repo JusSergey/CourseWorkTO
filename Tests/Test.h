@@ -8,6 +8,7 @@ class TestAbstract
 public:
     using KeyValue = std::pair<std::string, std::string>;
     using PairList = KeyValue;
+    virtual ~TestAbstract() = default;
 
 protected:
     PairList _pairResulList;
