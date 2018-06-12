@@ -47,8 +47,6 @@ public:
 
     std::string testIteration() const;
 
-    template <typename Value_T>
-    TestResult testTemplateValue();
 
     std::string testCache() const;
 
@@ -57,30 +55,5 @@ public:
     virtual string getPrintableInfo() const;
 };
 
-template<typename Value_T>
-ActiveDev::TestResult SubsystemCPU::testTemplateValue()
-{
-    static constexpr auto limit = 1024*1024*32;
-    auto delay_time_calc = _getItervalBetweenCalculate([&]{
-
-#define ValName value
-#define def ValName += ValName; ValName -= ValName; \
-            ValName *= ValName; ValName /= 3; \
-          ++ValName; --ValName;
-
-        Value_T ValName = static_cast<Value_T>(123);
-
-        for (register int i = 0; i < limit; ++i)
-        {
-                def       def def def
-            def def       def     def
-                def       def     def
-            def def def   def def def
-        }
-    });
-    (std::cout << "time: " << delay_time_calc << '\n').flush();
-    int64_t n = (int64_t(6) * 17 * limit);
-    return std::make_pair(Number<>::toStr(int64_t(n/delay_time_calc)) + " operation/sec", delay_time_calc);
-}
 
 #endif // SUBSYSTEMCPU_H

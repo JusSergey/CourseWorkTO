@@ -46,7 +46,6 @@ SOURCES += \
         SysInfo/SubsystemUSB.cpp \
         SysInfo/SubsystemNet.cpp \
     form.cpp \
-    testhw.cpp \
     serverhw.cpp \
     senderfile.cpp \
     Threads/Runnable.cpp \
@@ -59,7 +58,8 @@ SOURCES += \
     Utils/HtmlUtils.cpp \
     basicgraphicswidget.cpp \
     SystemOverview.cpp \
-    TestHardware.cpp
+    TestHardware.cpp \
+    Tests/CPUOperations.cpp
 
 HEADERS += \
         Net/buffer.h \
@@ -87,7 +87,6 @@ HEADERS += \
         SysInfo/SubsystemNet.h \
         form.h \
     forms.h \
-    testhw.h \
     serverhw.h \
     senderfile.h \
     Threads/Runnable.h \
@@ -106,7 +105,8 @@ HEADERS += \
     basicgraphicswidget.h \
     SystemOverview.h \
     types.h \
-    TestHardware.h
+    TestHardware.h \
+    Tests/CPUOperations.h
 
 FORMS += \
         widget.ui \

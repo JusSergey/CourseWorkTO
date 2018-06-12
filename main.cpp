@@ -42,6 +42,8 @@ void start_new_thr(){
 #include "SystemOverview.h"
 #include "TestHardware.h"
 
+#include "Tests/CPUOperations.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
