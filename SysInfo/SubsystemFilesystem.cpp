@@ -57,6 +57,8 @@ double SubsystemFilesystem::testWrite()
 
 double SubsystemFilesystem::testRead()
 {
+
+
     char *buffer = new char[SIZE_FILE / BLCK_FILE];
     bool isEnableFileCache = false;
 

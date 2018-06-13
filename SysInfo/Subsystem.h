@@ -17,7 +17,7 @@ class Subsystem
     DEVICE dev;
 public:
     Subsystem(DEVICE devType);
-    struct sysinfo getGlobalInfo();
+    static struct sysinfo getGlobalInfo();
 
     virtual ListStrVects getDeviceInfo() const { return getStructureInfo(getPrintableInfo()); }
     virtual string getPrintableInfo() const = 0;

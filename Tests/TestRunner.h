@@ -11,30 +11,38 @@ using std::chrono::duration_cast;
 using std::chrono::milliseconds;
 using std::chrono::microseconds;
 using condition_variable = std::condition_variable;
+using TimeType = int64_t;
+
+struct ResultTest {
+    using Ptr = std::unique_ptr<ResultTest>;
+    bool finished = false;
+    void setInMicrosec(TimeType _mcsec) {
+        microsec = _mcsec;
+        sec = ((double)(_mcsec / 1000)) / 1000.f;
+    }
+    TimeType microsec = 0;
+    float sec = 0;
+};
 
 template <typename SubTest>
 class TestRunner : public Runnable, public SubTest {
 
 public:
-    struct ResultTest {
-        using Ptr = std::unique_ptr<ResultTest>;
-        bool finished = false;
-        int64_t microsec;
-    };
+
     virtual ~TestRunner() = default;
 
 public:
-    static int64_t getItervalBetweenCalculate(const std::function<void ()> &func);
+    static TimeType getItervalBetweenCalculate(const std::function<void ()> &func);
 
 private:
     template <typename ...Args>
     TestRunner(condition_variable &conditionFinishTest,
-         ResultTest &resultTest,
+         ResultTest &result,
          Args &&...args) :
         Runnable(),
         SubTest(std::forward<Args>(args)...),
-        _condFinishTest(conditionFinishTest),
-        _result(resultTest)
+        _result(result),
+        _condFinishTest(conditionFinishTest)
     {}
 
     virtual void run() override;
@@ -42,14 +50,14 @@ private:
 
 public:
     template <typename ...Args>
-    static typename ResultTest::Ptr startInNewThread(condition_variable &conditionFinishTest, Args ...args) {
+    static typename ResultTest::Ptr startInNewThread(condition_variable &conditionFinishTest, ThreadPool &pool, Args &&...args) {
 
         typename ResultTest::Ptr resultObj(new ResultTest);
         Runnable::Ptr p(new TestRunner<SubTest>(conditionFinishTest,
-                                          *resultObj,
-                                          std::forward<Args>(args)...));
+                                                *resultObj,
+                                                std::forward<Args>(args)...));
 
-        ThreadPool::defaultPool()->start(std::move(p));
+        pool.start(std::move(p), true);
 
         return std::move(resultObj);
     }
@@ -59,12 +67,17 @@ public:
 
         typename ResultTest::Ptr resultObj(new ResultTest);
         Runnable::Ptr p(new TestRunner<SubTest>(conditionFinishTest,
-                                          *resultObj,
-                                          std::forward<Args>(args)...));
+                                                *resultObj,
+                                                std::forward<Args>(args)...));
 
         p->run();
 
         return std::move(resultObj);
+    }
+
+    void joinTest() const {
+        while (!_result.finished)
+            Thread::sleep(2);
     }
 
 private:
@@ -76,7 +89,7 @@ private:
 
 
 template<typename SubTest>
-int64_t TestRunner<SubTest>::getItervalBetweenCalculate(const std::function<void ()> &func)
+TimeType TestRunner<SubTest>::getItervalBetweenCalculate(const std::function<void ()> &func)
 {
     auto start = steady_clock::now();
     // calculating...
@@ -91,10 +104,10 @@ void TestRunner<SubTest>::run() {
 
     SubTest::preparationBeforeTest();
 
-    _result.microsec =
+    _result.setInMicrosec(
     getItervalBetweenCalculate([&](){
         SubTest::startTest();
-    });
+    }) );
 
     SubTest::preparationAfterTest();
 
@@ -104,7 +117,7 @@ void TestRunner<SubTest>::run() {
 }
 
 template<typename SubTest>
-const typename TestRunner<SubTest>::ResultTest &TestRunner<SubTest>::getResult() const
+const ResultTest &TestRunner<SubTest>::getResult() const
 { return _result; }
 
 #endif // TEST_H

@@ -25,7 +25,7 @@ public:
         bool border_width = 1;
     };
 
-    using IGF = const InfoGenerateFile &;
+    using IGF = InfoGenerateFile &;
 
 public:
     static bool createHtmlPage(IGF args);

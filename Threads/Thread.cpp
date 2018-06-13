@@ -23,6 +23,7 @@ void Thread::mainLoop() {
             _runnable->run();
             _runnable = nullptr;
         }
+
         _isUsed.store(false);
         Thread::sleep(DELAY_THREAD_MSEC);
     }

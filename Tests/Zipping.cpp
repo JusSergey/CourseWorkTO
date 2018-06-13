@@ -1,16 +1,20 @@
 #include "Zipping.h"
 #include "../utils.h"
 
+static constexpr const char *DEFAULT_IN_FILE = "raw_data.bin";
+static constexpr const char *DEFAULT_ZIP_FILE= "compressed.zip";
+static constexpr const size_t DEFAULT_IN_FILE_SIZE = 256;
+
 ///////////////////////////////
 // IMPLEMENTATION COMPRESS PART
 void ZipCompress::startTest() {
-    compress();
+    compress(DEFAULT_IN_FILE);
 }
 
 void ZipCompress::preparationBeforeTest()
 {
     if (!Utils::FileExist(DEFAULT_IN_FILE))
-        generateFile();
+        generateFile(DEFAULT_IN_FILE_SIZE);
 }
 
 void ZipCompress::preparationAfterTest()
@@ -20,8 +24,7 @@ void ZipCompress::preparationAfterTest()
 
 void ZipCompress::generateFile(size_t MBytes)
 {
-    std::string command = Utils::splitArgs("dd if=/dev/urandom of=", DEFAULT_IN_FILE, " count=1048576", " bs=", MBytes);
-    system(command.c_str());
+    HardDriveSpeed::generateRandomFile(MBytes, DEFAULT_ZIP_FILE);
 }
 
 void ZipCompress::compress(const char *filename)
@@ -35,7 +38,7 @@ void ZipCompress::compress(const char *filename)
 /////////////////////////////////
 // IMPLEMENTATION UNCOMPRESS PART
 void ZipUncompress::startTest() {
-    uncompress();
+    uncompress(DEFAULT_ZIP_FILE);
 }
 
 void ZipUncompress::preparationBeforeTest()

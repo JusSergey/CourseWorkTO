@@ -29,7 +29,7 @@ public:
     };
 
     static ThreadPool *defaultPool();
-    bool start(Runnable::Ptr &&runObj);
+    bool start(Runnable::Ptr &&runObj, bool waitIfNoFree = false);
     bool isStopping() const { return _stopping; }
     void stopAllThreads();
     void waitAll();

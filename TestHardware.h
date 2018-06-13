@@ -4,6 +4,7 @@
 #include <QWebEngineView>
 #include <QtWidgets>
 #include "types.h"
+#include "Utils/HtmlUtils.h"
 
 class TestHardware : public QWidget
 {
@@ -18,6 +19,11 @@ private:
     QLayout *initWebview();
     void initConnections();
     void saveToFile(QString namefile);
+
+private:
+    void startTestCPU(HtmlUtils::IGF inputDataForHtmlPage);
+    void startTestRAM(HtmlUtils::IGF inputDataForHtmlPage);
+    void startTestHardDrive(HtmlUtils::IGF inputDataForHtmlPage);
 
 private:
     QWebEngineView *webView         = nullptr;

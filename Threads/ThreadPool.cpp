@@ -40,14 +40,21 @@ ThreadPool *ThreadPool::defaultPool()
 
     return _defaultPool;
 }
-
-bool ThreadPool::start(Runnable::Ptr &&runObj) {
-    try {
-        getFreeThread()->setRunnable(std::move(runObj));
-    } catch (ExhausedThreads &e) {
-        std::cerr << e.what();
-        return false;
-    }
+bool ThreadPool::start(Runnable::Ptr &&runObj, bool waitIfNoFree) {
+    do {
+        try {
+            getFreeThread()->setRunnable(std::move(runObj));
+            break;
+        } catch (ExhausedThreads &e) {
+            if (waitIfNoFree) {
+                Thread::sleep(2);
+            }
+            else {
+                std::cerr << e.what();
+                return false;
+            }
+        }
+    } while(waitIfNoFree);
 
     return true;
 }
@@ -62,6 +69,6 @@ void ThreadPool::waitAll() {
     repeat:
     Thread::sleep(DELAY_THREAD_MSEC);
     for (Thread::Ptr &p : _threads)
-        if (!p->isStopped())
+        if (p->isUsed())
             goto repeat;
 }

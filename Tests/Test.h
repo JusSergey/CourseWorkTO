@@ -10,16 +10,11 @@ public:
     using PairList = KeyValue;
     virtual ~TestAbstract() = default;
 
-protected:
-    PairList _pairResulList;
-
 public:
     virtual void startTest() = 0;
     virtual void preparationBeforeTest() = 0;
     virtual void preparationAfterTest() = 0;
 
-public:
-    const PairList &getResultList() const;
 };
 
 #endif // _TEST_H

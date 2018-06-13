@@ -2,51 +2,6 @@
 #include <random>
 #include <ctime>
 
-template <typename NumberType>
-CPU::CPUOperations<NumberType>::CPUOperations()
-{
-
-}
-
-template <typename NumberType>
-void CPU::CPUOperations<NumberType>::startTest()
-{
-    this->testTemplateValue();
-}
-
-template <typename NumberType>
-void CPU::CPUOperations<NumberType>::preparationBeforeTest()
-{
-
-}
-
-template <typename NumberType>
-void CPU::CPUOperations<NumberType>::preparationAfterTest()
-{
-
-}
-
-template<typename NumberType>
-void CPU::CPUOperations<NumberType>::testTemplateValue()
-{
-    static constexpr auto limit = 1024*1024*32;
-
-#define ValName $$$
-#define def ValName += ValName; ValName -= ValName; \
-    ValName *= ValName; ValName /= 3; \
-    ++ValName; --ValName;
-
-    NumberType ValName = static_cast<NumberType>(123);
-
-    for (register int i = 0; i < limit; ++i)
-    {
-        def       def def def
-    def def       def     def
-        def       def     def
-    def def def   def def def
-    }
-}
-
 #define SIZE (1024*16)
 #define SIZE_SIZE (SIZE * SIZE)
 

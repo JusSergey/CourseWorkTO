@@ -14,24 +14,6 @@ public:
 #include "Tests/Queen.h"
 #include "Tests/Zipping.h"
 
-class MyRun : public Runnable {
-public:
-    virtual void run() override {
-        std::condition_variable cv;
-        TestRunner<ZipCompress>::ResultTest::Ptr result = TestRunner<ZipCompress>::startInNewThread(cv);
-        std::mutex m;
-        std::unique_lock<std::mutex> ul(m);
-        while (!result->finished)
-            cv.wait(ul);
-
-        std::cout << "complete" << std::endl;
-    }
-};
-
-
-void start_new_thr(){
-    ThreadPool::defaultPool()->start(Runnable::Ptr(new MyRun));
-}
 
 #include "utils.h"
 #include "SysInfo/SubsystemCPU.h"

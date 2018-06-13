@@ -59,7 +59,9 @@ SOURCES += \
     basicgraphicswidget.cpp \
     SystemOverview.cpp \
     TestHardware.cpp \
-    Tests/CPUOperations.cpp
+    Tests/CPUOperations.cpp \
+    Tests/HardDriveSpeed.cpp \
+    Tests/RAMReadWriteSpeed.cpp
 
 HEADERS += \
         Net/buffer.h \
@@ -106,7 +108,9 @@ HEADERS += \
     SystemOverview.h \
     types.h \
     TestHardware.h \
-    Tests/CPUOperations.h
+    Tests/CPUOperations.h \
+    Tests/HardDriveSpeed.h \
+    Tests/RAMReadWriteSpeed.h
 
 FORMS += \
         widget.ui \
