@@ -7,7 +7,11 @@
 #include "Tests/HardDriveSpeed.h"
 #include "Tests/RAMReadWriteSpeed.h"
 
-TestHardware::TestHardware(QWidget *parent) : QWidget(parent)
+TestHardware::TestHardware(QWidget *parent)
+    : QWidget(parent),
+      cpuTestComplete(false),
+      ramTestComplete(false),
+      hdiskTestComplete(false)
 {
     setWindowTitle("Test Hardware");
 
@@ -17,6 +21,7 @@ TestHardware::TestHardware(QWidget *parent) : QWidget(parent)
 
 void TestHardware::init()
 {
+    timerForWatcher = new QTimer(this);
     auto horisontalLayout = new QHBoxLayout;
     auto verticalLayout   = new QVBoxLayout;
     verticalLayout->addLayout(initCheckboxes());
@@ -75,6 +80,17 @@ QLayout *TestHardware::initWebview()
     return layoutObj;
 }
 
+void TestHardware::connectWatcherTimer()
+{
+    connect(timerForWatcher, SIGNAL(timeout()), this, SLOT(slotWatcherOnCompleteTests()));
+    timerForWatcher->start(300);
+}
+
+void TestHardware::disconnectWatcherTimer()
+{
+    disconnect(timerForWatcher, SIGNAL(timeout()), this, SLOT(slotWatcherOnCompleteTests()));
+}
+
 void TestHardware::initConnections()
 {
     connect(buttonStartTest, SIGNAL(clicked(bool)), this, SLOT(slotStartTest()));
@@ -96,10 +112,6 @@ void TestHardware::startTestCPU(HtmlUtils::IGF inputDataForHtmlPage)
     static constexpr size_t END   = 4;
 
     enum class TestTypes { x8, x16, x32, x64, ux8, ux16, ux32, ux64, _float, _double, _ldouble, _ufloat, _udouble, _uldouble };
-
-    auto lambdaTest = [&] (TestTypes type) -> TimeType {
-
-    };
 
     auto nth = new ThreadPool(4);
     ThreadPool &threads = *nth;
@@ -145,6 +157,8 @@ void TestHardware::startTestCPU(HtmlUtils::IGF inputDataForHtmlPage)
         );
     }
 
+    cpuTestComplete.store(true);
+
 }
 
 void TestHardware::startTestRAM(HtmlUtils::IGF inputDataForHtmlPage)
@@ -155,6 +169,8 @@ void TestHardware::startTestRAM(HtmlUtils::IGF inputDataForHtmlPage)
     int rwSpeed = (float)RAMReadWriteSpeed::getTestDataSizeInMBytes() / resultRW->sec;
 
     inputDataForHtmlPage.data.push_back({"Test Read/Write speed", Number<int64_t>::toStr(rwSpeed) + "MB/sec"});
+
+    ramTestComplete.store(true);
 }
 
 void TestHardware::startTestHardDrive(HtmlUtils::IGF inputDataForHtmlPage)
@@ -178,29 +194,44 @@ void TestHardware::startTestHardDrive(HtmlUtils::IGF inputDataForHtmlPage)
 
     inputDataForHtmlPage.data.push_back({"Test Read Hard Drive",
                                          Number<int>::toStr(readSpeed) + "MB/sec"});
+
+    hdiskTestComplete.store(true);
 }
 
-void TestHardware::slotStartTest()
+bool TestHardware::isAllTestsComplete() const
+{
+    return (cpuTestComplete && ramTestComplete && hdiskTestComplete);
+}
+
+std::string TestHardware::startTest()
 {
     HtmlUtils::InfoGenerateFile dataToCreateHtmlPage;
     dataToCreateHtmlPage.pageTitle = "Hardware Test";
 
     cout << "slotStartTest" << std::endl;
     if (checkCPU->isChecked()) {
+        cpuTestComplete.store(false);
         startTestCPU(dataToCreateHtmlPage);
-    }
+    } else cpuTestComplete.store(true);
 
     if (checkHardDrive->isChecked()) {
+        hdiskTestComplete.store(false);
         startTestHardDrive(dataToCreateHtmlPage);
-    }
+    } else hdiskTestComplete.store(true);
 
     if (checkRAM->isChecked()) {
+        ramTestComplete.store(false);
         startTestRAM(dataToCreateHtmlPage);
-    }
+    } else ramTestComplete.store(true);
 
-    string htmlPage = HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
-    webView->page()->setHtml(QString(htmlPage.c_str()));
-    //... to do
+    return HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
+}
+
+void TestHardware::slotStartTest()
+{
+    Runnable::Ptr ptr(new RunAsyncTests(this));
+    ThreadPool::defaultPool()->start(std::move(ptr), true);
+    connectWatcherTimer();
 }
 
 void TestHardware::slotGoToMenu()
@@ -215,4 +246,12 @@ void TestHardware::slotSendToServer()
     QString namefile = QDate::currentDate().toString() + ':' + QTime::currentTime().toString();
     saveToFile(namefile);
     (new SenderFile(namefile.toStdString()))->show();
+}
+
+void TestHardware::slotWatcherOnCompleteTests()
+{
+    if (isAllTestsComplete()) {
+        webView->page()->setHtml(QString(htmlPage.c_str()));
+        disconnectWatcherTimer();
+    }
 }
