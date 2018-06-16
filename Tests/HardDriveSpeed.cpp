@@ -61,8 +61,6 @@ void HardDriveSpeedWrite::preparationAfterTest()
 //////////////////////////////////////////////
 void HardDriveSpeedRead::startTest()
 {
-
-
     struct stat st;
     stat(DEFAULT_TEST_WRITE_FILENAME, &st);
 

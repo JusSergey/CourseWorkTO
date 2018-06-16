@@ -53,31 +53,13 @@ void Viewer::showCPU() const
 {
     cout << "~~~~~~~~~~~~~~~~~~~~CPU~~~~~~~~~~~~~~~~~~~\n";
     cout << SubsystemCPU::inst()->getPrintableInfo();
-//    list<string> names{"processor", "vendor_id", "model name", "cpuMHz", "microcode", "cachesize", "fpu", "cpuidlevel"};
-//    for (const auto &p : SubsystemCPU::inst()->getDeviceInfo()) {
-//        if (p.first == "processor") cout.put('\n');
-////        if (isContained(names, p.first))
-//            cout /*<< ' '*/ << p.first << ":" << p.second << '\n';
-//    }
     cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
 }
 
 void Viewer::showRAM() const
 {
-//    auto devinfo = SubsystemRAM::inst()->getDeviceInfo();
-//    auto max = getMaxLen(devinfo);
-
-//    list<string> names{"MemTotal", "MemFree", "MemAvailable", "Buffers", "Cached", "SwapTotal", "SwapFree"};
     cout << "~~~~~~~~~~~~~~~~~~~~RAM~~~~~~~~~~~~~~~~~~~\n";
     cout << SubsystemRAM::inst()->getPrintableInfo();
-//    for (const auto &p : devinfo) {
-//        if (isContained(names, p.first)){
-//            auto kb = Number<double>::toNum(StringUtil::resize(p.second, 9, ' '));
-//            auto GB = Number<float>::toStr(kb / 1024 / 1024);
-//            cout << ' ' << StringUtil::resize(p.first, max, ' ') << " : "
-//                 << StringUtil::resize(GB, 5, ' ') << " Gb" << '\n';
-//        }
-//    }
     cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
 }
 

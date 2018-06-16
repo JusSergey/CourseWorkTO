@@ -120,7 +120,7 @@ string OS::SubOS::getHTMLCode() const {
     }
     cout << std::endl;
     data.pop_front();
-    inpuInfo.data = std::move(data);
+    inpuInfo.listTables.emplace_back(std::move(data));
     inpuInfo.pageTitle = "DEF_PG_TLT";
     return HtmlUtils::createAndGetHtmlPage(inpuInfo);
 }

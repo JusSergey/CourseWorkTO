@@ -11,7 +11,7 @@ struct BOARD {
 
 class Queen : public TestAbstract {
 public:
-    Queen(size_t tableXY) :
+    Queen(size_t tableXY = 24) :
         _szTableXY(tableXY)
     {}
 

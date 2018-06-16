@@ -30,7 +30,7 @@ string Subsystem::getHTMLCode() const
     HtmlUtils::InfoGenerateFile inpuInfo;
     inpuInfo.border_width = 1;
     inpuInfo.collapse_border = true;
-    inpuInfo.data = getDeviceInfo();
+    inpuInfo.listTables.emplace_back(getDeviceInfo());
     inpuInfo.headTitle = {"first", "second"};
     inpuInfo.pageTitle = "DEF_PG_TLT";
     return HtmlUtils::createAndGetHtmlPage(inpuInfo);

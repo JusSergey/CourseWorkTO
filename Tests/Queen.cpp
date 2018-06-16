@@ -24,7 +24,7 @@ Queen::~Queen() {
 }
 
 void Queen::init() {
-    BOARD* b = new BOARD;
+    b = new BOARD;
     b->n = _szTableXY;
     b->matrix = new int*[_szTableXY];
     for (i = 0; i < _szTableXY; i++) {
@@ -67,14 +67,9 @@ void Queen::queens(size_t n)
 {
     // benchmarking
     if (placeQueen(&b, 0, &calls)) {
-        printBoard(b);
+        // no print for test
+        // printBoard(b);
     }
-
-    for (i = 0; i < n; i++) {
-        free(b->matrix[i]);
-        b->matrix[i] = NULL;
-    }
-
 }
 
 bool Queen::isValid(BOARD* b, int x, int y) {

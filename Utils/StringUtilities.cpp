@@ -81,9 +81,6 @@ std::string StringUtil::getWord(const std::string &src, size_t pos, const std::s
         }
     }
 
-    //minpos = (minpos == -1 ? 0 : minpos);
-    //maxpos = (maxpos == -1 ? src.size()-1 : maxpos);
-
     return src.substr(minpos+1, maxpos-1);
 }
 
@@ -99,6 +96,25 @@ std::string StringUtil::resize(const std::string &src, size_t sz, char aggregate
         }
         return res;
     }
+}
+
+std::string StringUtil::removeRepeatChars(const std::string &src, char remSymbol)
+{
+    bool wasFinded(false);
+    std::string result = forEach(src, [&](char symbol) -> bool {
+        if (symbol == remSymbol) {
+            if (wasFinded) {
+                return false;
+            }
+            wasFinded = true;
+
+        } else {
+            wasFinded = false;
+        }
+        return true;
+    });
+
+    return result;
 }
 
 std::string StringUtil::forEach(const std::string &src, std::function<bool (char)> callback)

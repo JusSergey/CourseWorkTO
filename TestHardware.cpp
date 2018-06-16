@@ -6,12 +6,16 @@
 #include "Tests/CPUOperations.h"
 #include "Tests/HardDriveSpeed.h"
 #include "Tests/RAMReadWriteSpeed.h"
+#include "Tests/Queen.h"
+#include "Tests/Zipping.h"
 
 TestHardware::TestHardware(QWidget *parent)
     : QWidget(parent),
       cpuTestComplete(false),
       ramTestComplete(false),
-      hdiskTestComplete(false)
+      hdiskTestComplete(false),
+      queenTestComplete(false),
+      zipTestComplete(false)
 {
     setWindowTitle("Test Hardware");
 
@@ -57,7 +61,9 @@ QLayout *TestHardware::initCheckboxes()
     {
         std::make_tuple(&checkCPU, "CPU"),
         std::make_tuple(&checkRAM, "RAM"),
-        std::make_tuple(&checkHardDrive, "HardDrive")
+        std::make_tuple(&checkHardDrive, "HardDrive"),
+        std::make_tuple(&checkQueenTest, "Queen Test"),
+        std::make_tuple(&checkZIPTest, "ZIP Test")
     }, this);
 }
 
@@ -135,9 +141,13 @@ void TestHardware::startTestCPU(HtmlUtils::IGF inputDataForHtmlPage)
 
     using TupleT = std::tuple<string, float, string>;
 
-    inputDataForHtmlPage.headTitle.push_back("1");
-    inputDataForHtmlPage.headTitle.push_back("12");
-    inputDataForHtmlPage.headTitle.push_back("123");
+    HtmlUtils::Table testCPUTable;
+
+    testCPUTable.nameTest = " CPU Test";
+
+    testCPUTable.headTitle.push_back("Тип даних");
+    testCPUTable.headTitle.push_back("Результат");
+    testCPUTable.headTitle.push_back("Тип");
 
     for (TupleT t : {
          std::make_tuple("8 bit integer", (float)df[TestTypes::x8]->microsec / 1000000.f, "signed"),
@@ -152,10 +162,12 @@ void TestHardware::startTestCPU(HtmlUtils::IGF inputDataForHtmlPage)
          std::make_tuple("double", (float)df[TestTypes::_double]->microsec / 1000000.f, "only signed"),
          std::make_tuple("long double", (float)df[TestTypes::_ldouble]->microsec / 1000000.f, "only signed")})
     {
-        inputDataForHtmlPage.data.push_back(
+        testCPUTable.push_back(
                      StringVector {std::get<TITLE>(t), Number<float>::toStr(std::get<TIME>(t)), std::get<TYPE>(t)}
         );
     }
+
+    inputDataForHtmlPage.listTables.emplace_back(std::move(testCPUTable));
 
     cpuTestComplete.store(true);
 
@@ -168,7 +180,12 @@ void TestHardware::startTestRAM(HtmlUtils::IGF inputDataForHtmlPage)
 
     int rwSpeed = (float)RAMReadWriteSpeed::getTestDataSizeInMBytes() / resultRW->sec;
 
-    inputDataForHtmlPage.data.push_back({"Test Read/Write speed", Number<int64_t>::toStr(rwSpeed) + "MB/sec"});
+    HtmlUtils::Table testRAMTable;
+    testRAMTable.nameTest = "Ram Test";
+    testRAMTable.headTitle.push_back("Description");
+    testRAMTable.headTitle.push_back("Speed");
+    testRAMTable.push_back({"Test Read/Write speed", Number<int64_t>::toStr(rwSpeed) + "MB/sec"});
+    inputDataForHtmlPage.listTables.emplace_back(std::move(testRAMTable));
 
     ramTestComplete.store(true);
 }
@@ -184,23 +201,68 @@ void TestHardware::startTestHardDrive(HtmlUtils::IGF inputDataForHtmlPage)
 
     std::cout << resultRead->sec << std::endl;
 
+    // callculate the results
     int writeSpeed = MBytes / resultWrite->sec;
     int readSpeed  = MBytes / resultRead->sec;
 
     std::cout << writeSpeed << " : " << readSpeed << std::endl;
 
-    inputDataForHtmlPage.data.push_back({"Test Write Hard Drive",
+    // adding result of test
+    HtmlUtils::Table testHardDriveTable;
+    testHardDriveTable.nameTest = "Hard Disk Test";
+    testHardDriveTable.headTitle.push_back("Description");
+    testHardDriveTable.headTitle.push_back("Speed");
+    testHardDriveTable.push_back({"Test Write Hard Drive",
                                          Number<int>::toStr(writeSpeed) + "MB/sec"});
-
-    inputDataForHtmlPage.data.push_back({"Test Read Hard Drive",
+    testHardDriveTable.push_back({"Test Read Hard Drive",
                                          Number<int>::toStr(readSpeed) + "MB/sec"});
+    inputDataForHtmlPage.listTables.emplace_back(std::move(testHardDriveTable));
 
+    //set flag of complete test
     hdiskTestComplete.store(true);
+}
+
+void TestHardware::startTestQueen(HtmlUtils::IGF inputDataForHtmlPage)
+{
+    condition_variable cv;
+    ResultTest::Ptr result(TestRunner<Queen>::startInCurrentThread(cv));
+
+    HtmlUtils::Table tableOfQueen;
+    tableOfQueen.nameTest = "Queen Test";
+    tableOfQueen.headTitle = {"Опис", "бал 1/10"};
+    tableOfQueen.push_back({"бал", Number<float>::toStr(result->sec)});
+
+    inputDataForHtmlPage.listTables.push_back(std::move(tableOfQueen));
+
+    queenTestComplete.store(true);
+}
+
+void TestHardware::startTestZIP(HtmlUtils::IGF inputDataForHtmlPage)
+{
+    condition_variable cv;
+    ResultTest::Ptr resultCompress(TestRunner<ZipCompress>::startInCurrentThread(cv));
+    ResultTest::Ptr resultUncompress(TestRunner<ZipUncompress>::startInCurrentThread(cv));
+
+    HtmlUtils::Table tableOfZip;
+
+    tableOfZip.nameTest = "Стиснення за допомогою zip архіватора";
+    tableOfZip.headTitle = {"Операція", "Розмір данних", "Час роботи"};
+
+    tableOfZip.push_back({"Стиснення", Number<size_t>::toStr(ZipCompress::getSizeFile())   + "MBytes", Number<float>::toStr(resultCompress->sec)});
+    tableOfZip.push_back({"Екстракт" , Number<size_t>::toStr(ZipUncompress::getSizeFile()) + "MBytes", Number<float>::toStr(resultUncompress->sec)});
+
+    inputDataForHtmlPage.listTables.push_back(std::move(tableOfZip));
+
+    zipTestComplete.store(true);
 }
 
 bool TestHardware::isAllTestsComplete() const
 {
-    return (cpuTestComplete && ramTestComplete && hdiskTestComplete);
+    return (cpuTestComplete   &&
+            ramTestComplete   &&
+            zipTestComplete   &&
+            hdiskTestComplete &&
+            queenTestComplete);
 }
 
 std::string TestHardware::startTest()
@@ -223,6 +285,16 @@ std::string TestHardware::startTest()
         ramTestComplete.store(false);
         startTestRAM(dataToCreateHtmlPage);
     } else ramTestComplete.store(true);
+
+    if (checkQueenTest->isChecked()) {
+        queenTestComplete.store(false);
+        startTestQueen(dataToCreateHtmlPage);
+    } else queenTestComplete.store(true);
+
+    if (checkZIPTest->isChecked()) {
+        zipTestComplete.store(false);
+        startTestZIP(dataToCreateHtmlPage);
+    } else zipTestComplete.store(true);
 
     return HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
 }

@@ -1,4 +1,5 @@
 #include "SubsystemFilesystem.h"
+#include "Utils/HtmlUtils.h"
 #include <sys/ioctl.h>
 #include <linux/hdreg.h>
 #include <fstream>
@@ -16,17 +17,65 @@ ActiveDev::TestResult SubsystemFilesystem::test()
 
 }
 
-std::string SubsystemFilesystem::getPrintableInfo() const
+string SubsystemFilesystem::getPrintableInfo() const
 {
     const string path = "info_hard_drive";
 
-    system((string("fdisk -l /dev/sda >> ") + path).c_str());
+    system((string("fdisk -l >> ") + path).c_str());
 
     auto result = _getDataFromFile(path);
 
     system((string("rm ") + path).c_str());
 
     return result;
+}
+
+string SubsystemFilesystem::getHTMLCode() const
+{
+    HtmlUtils::InfoGenerateFile inputDataForHtml;
+
+    string rawData = getPrintableInfo();
+    auto res = getStructureInfo(rawData);
+
+    static const string FIND_LINE = "\n\n";
+    auto posNextChunk = rawData.find(FIND_LINE.c_str());
+    HtmlUtils::Table overviewTable = getStructureInfo(rawData);
+    overviewTable.nameTest = "Загальна інформація";
+    inputDataForHtml.listTables.emplace_back(std::move(overviewTable));
+
+    if (posNextChunk != string::npos) {
+        string nextChunk = rawData.substr(posNextChunk + FIND_LINE.length());
+        auto strList = StringUtil::cropToStrings(nextChunk, '\n');
+        HtmlUtils::Table table;
+        table.nameTest = "Інформація про томи";
+        auto headTitle = StringUtil::cropToStrings(strList.front(), ' ');
+        table.headTitle.insert(table.headTitle.end(), headTitle.begin(), headTitle.end());
+        const size_t countColumns = headTitle.size();
+        strList.pop_front();
+        for (auto strRowList : strList) {
+            auto strListRawLines = StringUtil::cropToStrings(strRowList, ' ');
+            size_t i(0);
+            string lastItemInRow;
+            HtmlUtils::TableRow rowData;
+            for (auto strField : strListRawLines) {
+                if (++i < countColumns) {
+                    rowData.push_back(strField);
+                } else {
+                    lastItemInRow += strField;
+                    lastItemInRow += " ";
+                }
+            }
+            if (!lastItemInRow.empty()) {
+                rowData.push_back(std::move(lastItemInRow));
+            }
+            table.push_back(std::move(rowData));
+        }
+        inputDataForHtml.listTables.emplace_back(std::move(table));
+
+        cout << "\nremove spaces: \n" << StringUtil::removeRepeatChars(nextChunk, ' ');
+    }
+
+    return HtmlUtils::createAndGetHtmlPage(inputDataForHtml);
 }
 
 static constexpr size_t SIZE_FILE = 1024*1024 * 512;
@@ -57,8 +106,6 @@ double SubsystemFilesystem::testWrite()
 
 double SubsystemFilesystem::testRead()
 {
-
-
     char *buffer = new char[SIZE_FILE / BLCK_FILE];
     bool isEnableFileCache = false;
 

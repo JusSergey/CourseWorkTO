@@ -41,8 +41,8 @@ private:
          Args &&...args) :
         Runnable(),
         SubTest(std::forward<Args>(args)...),
-        _result(result),
-        _condFinishTest(conditionFinishTest)
+        _condFinishTest(conditionFinishTest),
+        _result(result)
     {}
 
     virtual void run() override;

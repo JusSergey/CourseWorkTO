@@ -3,11 +3,15 @@
 #include "Test.h"
 #include "HardDriveSpeed.h"
 
+class ZipAbstract : public TestAbstract {
+public:
+    ZipAbstract() = default;
+    static size_t getSizeFile();
+};
 
 // THE TEST FOR DEFINE SPEED OF COMPRESS
-class ZipCompress : public TestAbstract
+class ZipCompress : public ZipAbstract
 {
-
     friend class ZipUncompress;
 public:
     ZipCompress() = default;
@@ -22,7 +26,7 @@ private:
 
 
 // THE TEST FOR DEFINE SPEED OF UNCOMPRESS
-class ZipUncompress : public TestAbstract
+class ZipUncompress : public ZipAbstract
 {
 public:
     ZipUncompress() = default;

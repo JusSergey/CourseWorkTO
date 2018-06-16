@@ -41,6 +41,8 @@ private:
     void startTestCPU(HtmlUtils::IGF inputDataForHtmlPage);
     void startTestRAM(HtmlUtils::IGF inputDataForHtmlPage);
     void startTestHardDrive(HtmlUtils::IGF inputDataForHtmlPage);
+    void startTestQueen(HtmlUtils::IGF inputDataForHtmlPage);
+    void startTestZIP(HtmlUtils::IGF inputDataForHtmlPage);
     bool isAllTestsComplete() const;
 
 public:
@@ -52,6 +54,8 @@ private:
     QCheckBox *checkCPU             = nullptr;
     QCheckBox *checkRAM             = nullptr;
     QCheckBox *checkHardDrive       = nullptr;
+    QCheckBox *checkQueenTest       = nullptr;
+    QCheckBox *checkZIPTest         = nullptr;
     QPushButton *buttonStartTest    = nullptr;
     QPushButton *buttonGoToMenu     = nullptr;
     QPushButton *buttonSendToServer = nullptr;
@@ -60,6 +64,8 @@ private:
     std::atomic_bool cpuTestComplete;
     std::atomic_bool ramTestComplete;
     std::atomic_bool hdiskTestComplete;
+    std::atomic_bool queenTestComplete;
+    std::atomic_bool zipTestComplete;
 
     string htmlPage;
 

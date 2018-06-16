@@ -50,30 +50,16 @@ string HtmlUtils::createBody(HtmlUtils::IGF args)
 
 string HtmlUtils::createTableList(HtmlUtils::IGF args)
 {
-    auto createOneLine = [&](const StringVector &args,
-                             const CallbackColorByPos &getColor,
-                             int row)
-    {
-        stringstream ssSmallBuffer;
-
-        ssSmallBuffer     << "<tr>                                                                \n";
-        for (int col = 0; col < args.size(); ++col)
-            ssSmallBuffer << "  <th bgcolor=" << getColor(row, col) << ">" << args[col] << "</th> \n";
-        ssSmallBuffer     << "</tr>                                                               \n";
-
-        return ssSmallBuffer.str();
-    };
-
     stringstream ssbuffer;
-    ssbuffer << "<table style=\"width:100%\">\n\n"
-             << createOneLine(args.headTitle, args.getColorByPos, 0);
 
-    int i = 1;
-    for (const auto &pair_obj : args.data) {
-        ssbuffer << createOneLine(pair_obj, args.getColorByPos, i++);
+    for (Table &tableData : args.listTables) {
+        ssbuffer << rawCreateBodyTable(_Table({TableRow{tableData.nameTest}}), args.getColorTitle);
+
+        Table bodyTableData(tableData);
+        bodyTableData.push_front(tableData.headTitle);
+        ssbuffer << rawCreateBodyTable(bodyTableData, args.getColorByPos);
+        ssbuffer << "<br>";
     }
-
-    ssbuffer << "</table>\n";
 
     return ssbuffer.str();
 }
@@ -106,4 +92,33 @@ string HtmlUtils::compressHtmlPage(string inputPage)
     }
 
     return inputPage;
+}
+
+std::string HtmlUtils::rawCreateBodyTable(const _Table &tableData, const CallbackColorByPos &colorGetter)
+{
+    auto createOneLine = [&](const StringVector &args,
+                             const CallbackColorByPos &getColor,
+                             int row)
+    {
+        stringstream ssSmallBuffer;
+
+        ssSmallBuffer     << "<tr>                                                                \n";
+        for (size_t col = 0; col < args.size(); ++col)
+            ssSmallBuffer << "  <th bgcolor=" << getColor(row, col) << ">" << args[col] << "</th> \n";
+        ssSmallBuffer     << "</tr>                                                               \n";
+
+        return ssSmallBuffer.str();
+    };
+
+    stringstream ssbuffer;
+    ssbuffer << "<table style=\"width:100%\">\n\n";
+
+    int i = 0;
+    for (const auto &pair_obj : tableData) {
+        ssbuffer << createOneLine(pair_obj, colorGetter, i++);
+    }
+
+    ssbuffer << "</table>\n";
+
+    return ssbuffer.str();
 }

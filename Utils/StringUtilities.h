@@ -38,6 +38,7 @@ public:
     static std::string getWord(const std::string &src, size_t pos, const std::string &limitsChars);
 
     static std::string resize(const std::string &src, size_t sz, char aggregate = ' ');
+    static std::string removeRepeatChars(const std::string &src, char remSymbol);
 
 private:
     static std::string forEach(const std::string &src, std::function<bool(char)>);

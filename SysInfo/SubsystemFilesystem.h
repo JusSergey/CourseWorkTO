@@ -20,6 +20,8 @@ public:
     // get formatting info for `cout'
     virtual string getPrintableInfo() const;
 
+    virtual string getHTMLCode() const override;
+
 public:
     double testWrite();
     double testRead();
