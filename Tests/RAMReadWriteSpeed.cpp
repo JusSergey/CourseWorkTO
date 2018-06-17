@@ -4,7 +4,7 @@ static constexpr int_fast64_t ITERATIONS_TEST = (16 * 8);
 
 void RAMReadWriteSpeed::startTest()
 {
-    int_fast64_t byte = 'b';
+    int_fast64_t byte = 0xFAFAFAFAFAFAFAFA;
     for (int_fast64_t n = 0; n < ITERATIONS_TEST; ++n) {
         for (register int_fast64_t i = 0; i < SIZE_ARR-2; ++i) {
             _buffer[i] = byte;
@@ -22,7 +22,12 @@ void RAMReadWriteSpeed::preparationAfterTest()
     delete []_buffer;
 }
 
+void RAMReadWriteSpeed::setBallForThisTest(ResultTest &test)
+{
+    test.ball = TestAbstract::basicComputeBallOftest(1, test.sec, 80);
+}
+
 int64_t RAMReadWriteSpeed::getTestDataSizeInMBytes()
 {
-    return (SIZE_ARR * ITERATIONS_TEST) / 1048576 * sizeof(int_fast64_t);
+    return (SIZE_ARR * ITERATIONS_TEST) / 1048576 * sizeof(int_fast64_t)*2;
 }

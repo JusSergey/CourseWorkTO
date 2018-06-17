@@ -57,6 +57,11 @@ void HardDriveSpeedWrite::preparationAfterTest()
 
 }
 
+void HardDriveSpeedWrite::setBallForThisTest(ResultTest &test)
+{
+    test.ball = static_cast<int>(((float)_szFile / 512.f) / test.sec);
+}
+
 
 //////////////////////////////////////////////
 void HardDriveSpeedRead::startTest()
@@ -74,14 +79,13 @@ void HardDriveSpeedRead::startTest()
         return;
     }
 
-    int64_t readBytes(0);
     const int64_t allBytes = st.st_size;
     std::cout << "sz read: " << allBytes / 1048576 << std::endl;
 
-    while (readBytes < allBytes) {
-        const int64_t bs = (allBytes - readBytes > _buffer.size() ? _buffer.size() : allBytes - readBytes);
+    while (wasBeenRead < allBytes) {
+        const int64_t bs = (allBytes - wasBeenRead > _buffer.size() ? _buffer.size() : allBytes - wasBeenRead);
         ifRead.read(_buffer.data(), bs);
-        readBytes += bs;
+        wasBeenRead += bs;
     }
 
     ifRead.close();
@@ -89,11 +93,17 @@ void HardDriveSpeedRead::startTest()
 
 void HardDriveSpeedRead::preparationBeforeTest()
 {
-    std::cout << "DROP2";
+    wasBeenRead = 0;
     system("free && sync && echo 3 > /proc/sys/vm/drop_caches && free");
 }
 
 void HardDriveSpeedRead::preparationAfterTest()
 {
     remove(DEFAULT_TEST_WRITE_FILENAME);
+}
+
+void HardDriveSpeedRead::setBallForThisTest(ResultTest &test)
+{
+    //wasBeenRead - in bytes. wasBeenRead/1048576 is meeans as convert to MBytes
+    static_cast<int>(((float)(wasBeenRead/1048576) / 1024.f) / test.sec)*80;
 }

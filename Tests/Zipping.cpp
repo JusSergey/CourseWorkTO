@@ -28,6 +28,11 @@ void ZipCompress::preparationAfterTest()
 
 }
 
+void ZipCompress::setBallForThisTest(ResultTest &test)
+{
+    test.ball = TestAbstract::basicComputeBallOftest(7.152F, test.sec, 80.F);
+}
+
 void ZipCompress::generateFile(size_t MBytes)
 {
     HardDriveSpeed::generateRandomFile(MBytes, DEFAULT_IN_FILE);
@@ -57,6 +62,11 @@ void ZipUncompress::preparationAfterTest()
 {
     remove(DEFAULT_ZIP_FILE);
     remove(DEFAULT_IN_FILE);
+}
+
+void ZipUncompress::setBallForThisTest(ResultTest &test)
+{
+    test.ball = TestAbstract::basicComputeBallOftest(1.385F, test.sec, 80.F);
 }
 
 void ZipUncompress::uncompress(const char *filename)

@@ -20,6 +20,7 @@ public:
     virtual void startTest() override;
     virtual void preparationBeforeTest() override;
     virtual void preparationAfterTest() override;
+    virtual void setBallForThisTest(ResultTest &test) override;
 
 private:
     size_t _szTableXY;

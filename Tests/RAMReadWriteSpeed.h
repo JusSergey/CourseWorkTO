@@ -10,6 +10,7 @@ public:
     virtual void startTest() override;
     virtual void preparationBeforeTest() override;
     virtual void preparationAfterTest() override;
+    virtual void setBallForThisTest(ResultTest &test);
 
     static int64_t getTestDataSizeInMBytes();
 };

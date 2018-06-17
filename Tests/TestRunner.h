@@ -5,24 +5,13 @@
 #include <utility>
 #include <functional>
 #include <condition_variable>
+#include "Test.h"
 
 using std::chrono::steady_clock;
 using std::chrono::duration_cast;
 using std::chrono::milliseconds;
 using std::chrono::microseconds;
 using condition_variable = std::condition_variable;
-using TimeType = int64_t;
-
-struct ResultTest {
-    using Ptr = std::unique_ptr<ResultTest>;
-    bool finished = false;
-    void setInMicrosec(TimeType _mcsec) {
-        microsec = _mcsec;
-        sec = ((double)(_mcsec / 1000)) / 1000.f;
-    }
-    TimeType microsec = 0;
-    float sec = 0;
-};
 
 template <typename SubTest>
 class TestRunner : public Runnable, public SubTest {

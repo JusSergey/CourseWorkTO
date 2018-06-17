@@ -22,14 +22,17 @@ public:
     virtual void startTest() override;
     virtual void preparationBeforeTest() override;
     virtual void preparationAfterTest() override;
+    virtual void setBallForThisTest(ResultTest &test) override;
 };
 
 //
 class HardDriveSpeedRead : public TestAbstract, public HardDriveSpeed {
+    int64_t wasBeenRead = 0;
 public:
     virtual void startTest() override;
     virtual void preparationBeforeTest() override;
     virtual void preparationAfterTest() override;
+    virtual void setBallForThisTest(ResultTest &test) override;
 };
 
 #endif // HARDDRIVESPEED_H

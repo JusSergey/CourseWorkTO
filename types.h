@@ -35,6 +35,7 @@ using StringPair     = pair     <string, string>;
 using ListStringPair = list     <StringPair>;
 using StringSet      = set      <string>;
 using ListStrVects   = list     <StringVector>;
+using TimeType       = int64_t;
 
 // my callback's
 using CallbackColorByPos = function<std::string(int row, int col)>;

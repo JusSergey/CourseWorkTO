@@ -18,6 +18,7 @@ public:
     virtual void startTest() override;
     virtual void preparationBeforeTest() override;
     virtual void preparationAfterTest() override;
+    virtual void setBallForThisTest(ResultTest &test) override;
 
 private:
     void generateFile(size_t MBytes);
@@ -33,6 +34,7 @@ public:
     virtual void startTest() override;
     virtual void preparationBeforeTest() override;
     virtual void preparationAfterTest() override;
+    virtual void setBallForThisTest(ResultTest &test) override;
 
 private:
     void uncompress(const char *filename);

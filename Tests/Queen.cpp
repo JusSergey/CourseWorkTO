@@ -20,6 +20,11 @@ void Queen::preparationAfterTest()
     delete b;
 }
 
+void Queen::setBallForThisTest(ResultTest &test)
+{
+    TestAbstract::basicComputeBallOftest(1.F, test.sec, 100.F);
+}
+
 Queen::~Queen() {
 }
 

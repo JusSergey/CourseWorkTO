@@ -14,6 +14,7 @@ public:
     virtual void startTest() override;
     virtual void preparationBeforeTest() override;
     virtual void preparationAfterTest() override;
+    virtual void setBallForThisTest(ResultTest &test) override;
 
 private:
     void testTemplateValue();
@@ -34,6 +35,12 @@ void CPUOperations<NumberType>::preparationBeforeTest()
 template <typename NumberType>
 void CPUOperations<NumberType>::preparationAfterTest()
 {
+}
+
+template<typename NumberType>
+void CPUOperations<NumberType>::setBallForThisTest(ResultTest &test)
+{
+    test.ball = TestAbstract::basicComputeBallOftest(2.5f, test.sec, 50.f);
 }
 
 template<typename NumberType>
