@@ -2,6 +2,7 @@
 #include "forms.h"
 #include "senderfile.h"
 #include "Utils/HtmlUtils.h"
+#include "SaverFile.h"
 #include "Tests/TestRunner.h"
 #include "Tests/CPUOperations.h"
 #include "Tests/HardDriveSpeed.h"
@@ -15,7 +16,9 @@ TestHardware::TestHardware(QWidget *parent)
       ramTestComplete(false),
       hdiskTestComplete(false),
       queenTestComplete(false),
-      zipTestComplete(false)
+      zipTestComplete(false),
+      isNeedToUpdateHtmlView(false),
+      htmlPage(HtmlUtils::getEmptyHtmlPage())
 {
     setWindowTitle("Test Hardware");
 
@@ -73,7 +76,8 @@ QLayout *TestHardware::initButtons()
     {
         std::make_tuple(&buttonStartTest, "Тестувати"),
         std::make_tuple(&buttonGoToMenu, "Меню"),
-        std::make_tuple(&buttonSendToServer, "Надіслати на сервер")
+        std::make_tuple(&buttonSendToServer, "Надіслати на сервер"),
+        std::make_tuple(&buttonSaveAsFile, "Зберегти у файл...")
     }, this);
 }
 
@@ -102,6 +106,7 @@ void TestHardware::initConnections()
     connect(buttonStartTest, SIGNAL(clicked(bool)), this, SLOT(slotStartTest()));
     connect(buttonGoToMenu,  SIGNAL(clicked(bool)), this, SLOT(slotGoToMenu()));
     connect(buttonSendToServer, SIGNAL(clicked(bool)), this, SLOT(slotSendToServer()));
+    connect(buttonSaveAsFile, SIGNAL(clicked(bool)), this, SLOT(slotSaveAsFile()));
 }
 
 void TestHardware::saveToFile(QString namefile)
@@ -170,7 +175,6 @@ void TestHardware::startTestCPU(HtmlUtils::IGF inputDataForHtmlPage)
     inputDataForHtmlPage.listTables.emplace_back(std::move(testCPUTable));
 
     cpuTestComplete.store(true);
-
 }
 
 void TestHardware::startTestRAM(HtmlUtils::IGF inputDataForHtmlPage)
@@ -265,7 +269,7 @@ bool TestHardware::isAllTestsComplete() const
             queenTestComplete);
 }
 
-std::string TestHardware::startTest()
+void TestHardware::startTest()
 {
     HtmlUtils::InfoGenerateFile dataToCreateHtmlPage;
     dataToCreateHtmlPage.pageTitle = "Hardware Test";
@@ -274,35 +278,50 @@ std::string TestHardware::startTest()
     if (checkCPU->isChecked()) {
         cpuTestComplete.store(false);
         startTestCPU(dataToCreateHtmlPage);
+        isNeedToUpdateHtmlView.store(true);
+        htmlPage = HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
     } else cpuTestComplete.store(true);
 
     if (checkHardDrive->isChecked()) {
         hdiskTestComplete.store(false);
         startTestHardDrive(dataToCreateHtmlPage);
+        isNeedToUpdateHtmlView.store(true);
+        htmlPage = HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
     } else hdiskTestComplete.store(true);
 
     if (checkRAM->isChecked()) {
         ramTestComplete.store(false);
         startTestRAM(dataToCreateHtmlPage);
+        isNeedToUpdateHtmlView.store(true);
+        htmlPage = HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
     } else ramTestComplete.store(true);
 
     if (checkQueenTest->isChecked()) {
         queenTestComplete.store(false);
         startTestQueen(dataToCreateHtmlPage);
+        isNeedToUpdateHtmlView.store(true);
+        htmlPage = HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
     } else queenTestComplete.store(true);
 
     if (checkZIPTest->isChecked()) {
         zipTestComplete.store(false);
         startTestZIP(dataToCreateHtmlPage);
+        isNeedToUpdateHtmlView.store(true);
+        htmlPage = HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
     } else zipTestComplete.store(true);
 
-    return HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
 }
 
 void TestHardware::slotStartTest()
 {
     Runnable::Ptr ptr(new RunAsyncTests(this));
     ThreadPool::defaultPool()->start(std::move(ptr), true);
+
+    htmlPage = HtmlUtils::getEmptyHtmlPage();
+    webView->setHtml(QString(htmlPage.c_str()));
+
+    buttonSendToServer->setEnabled(false);
+    buttonStartTest->setEnabled(false);
     connectWatcherTimer();
 }
 
@@ -320,10 +339,21 @@ void TestHardware::slotSendToServer()
     (new SenderFile(namefile.toStdString()))->show();
 }
 
+void TestHardware::slotSaveAsFile()
+{
+    SaverFile::saveLocalFile((const char *)htmlPage.c_str(), htmlPage.length());
+}
+
 void TestHardware::slotWatcherOnCompleteTests()
 {
-    if (isAllTestsComplete()) {
+    if (isNeedToUpdateHtmlView.load()) {
+        webView->page()->setHtml(QString(htmlPage.c_str()));
+        isNeedToUpdateHtmlView.store(false);
+    }
+    else if (isAllTestsComplete()) {
         webView->page()->setHtml(QString(htmlPage.c_str()));
         disconnectWatcherTimer();
+        buttonSendToServer->setEnabled(true);
+        buttonStartTest->setEnabled(true);
     }
 }

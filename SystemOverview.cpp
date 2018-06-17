@@ -2,6 +2,7 @@
 #include "SysInfo/All.h"
 #include "Utils/HtmlUtils.h"
 #include "senderfile.h"
+#include "SaverFile.h"
 #include "forms.h"
 #include <fstream>
 #include <list>
@@ -25,6 +26,7 @@ void MyTreeView::init()
 
     create_node(ROOT_HW, HARDWARE);
     add_child(ROOT_HW, CPU);
+    add_child(ROOT_HW, DMI);
     add_child(ROOT_HW, USB);
     add_child(ROOT_HW, GPU);
     add_child(ROOT_HW, NETWORK);
@@ -46,6 +48,7 @@ void MyTreeView::init()
 ///
 SystemOverview::SystemOverview(QWidget *parent) :
     QWidget(parent),
+    htmlPage(HtmlUtils::getEmptyHtmlPage()),
     treeView(new MyTreeView(parent)),
     lockedUpdateInfo(false)
 {
@@ -77,7 +80,11 @@ QLayout *SystemOverview::initButtons()
 
     gotoMenu = new QPushButton("Меню", this);
     sendToServer = new QPushButton("Надiслати на сервер", this);
+    buttonSaveAsFile = new QPushButton("Зберегти у файл...", this);
+    buttonSaveAllAsFile = new QPushButton("Зберегти все у файл...", this);
 
+    l->addWidget(buttonSaveAllAsFile);
+    l->addWidget(buttonSaveAsFile);
     l->addWidget(gotoMenu);
     l->addWidget(sendToServer);
 
@@ -121,7 +128,8 @@ void SystemOverview::initConnections()
     connect(this->treeView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(slotClickTreeView(QTreeWidgetItem*,int)));
     connect(this->gotoMenu, SIGNAL(clicked(bool)), this, SLOT(on_pushButton_clicked()));
     connect(this->sendToServer, SIGNAL(clicked(bool)), this, SLOT(on_buttonSend_clicked()));
-    //connect(this->timerForUpdateInfo, SIGNAL(timeout()), this, SLOT(slotUpdateInfoFromDevice()));
+    connect(this->buttonSaveAsFile, SIGNAL(clicked(bool)), this, SLOT(slotSaveAsFile()));
+    connect(this->buttonSaveAllAsFile, SIGNAL(clicked(bool)), this, SLOT(slotSaveAllAsFile()));
     connect(this->webView->page(), SIGNAL(scrollPositionChanged(QPointF)), this, SLOT(slotScrollChangePosition(QPointF)));
 }
 
@@ -181,7 +189,8 @@ void SystemOverview::slotUpdateInfoFromDevice()
 {
     if (currentView) {
         qDebug() << currentView->getPrintableInfo().c_str();
-        webView->setHtml(QString(currentView->getHTMLCode().c_str()));
+        htmlPage = currentView->getHTMLCode();
+        webView->setHtml(QString(htmlPage.c_str()));
         QScroller::scroller(webView->page())->scrollTo(QPointF(-100, -100));
     }
 }
@@ -190,6 +199,34 @@ void SystemOverview::slotScrollChangePosition(QPointF newPosition)
 {
     qDebug() << "scroll";
     currentPosition = newPosition;
+}
+
+void SystemOverview::slotSaveAllAsFile()
+{
+    string allHtmlPage;
+    for (Subsystem *subsystem : std::initializer_list<Subsystem*>{
+         SubsystemCPU::inst(),
+         SubsystemDMI::inst(),
+         SubsystemRAM::inst(),
+         SubsystemGPU::inst(),
+         SubsystemUSB::inst(),
+         SubsystemNet::inst(),
+         SubsystemFilesystem::inst(),
+         OS::Processes::inst(),
+         OS::Modules::inst(),
+         OS::RAMMemory::inst()
+        })
+    {
+        allHtmlPage += subsystem->getHTMLCode();
+        allHtmlPage += HtmlUtils::getBRTag();
+    }
+
+    SaverFile::saveLocalFile((const char *)allHtmlPage.c_str(), allHtmlPage.length());
+}
+
+void SystemOverview::slotSaveAsFile()
+{
+    SaverFile::saveLocalFile((const char *)htmlPage.c_str(), htmlPage.length());
 }
 
 void SystemOverview::on_pushButton_clicked()

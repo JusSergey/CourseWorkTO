@@ -21,7 +21,7 @@ private:
         {}
         virtual void run() override {
             if (_ptr)
-                _ptr->htmlPage = _ptr->startTest();
+                _ptr->startTest();
         }
     };
 
@@ -47,7 +47,7 @@ private:
 
 public:
     ///@return string of html page
-    string startTest();
+    void startTest();
 
 private:
     QWebEngineView *webView         = nullptr;
@@ -59,6 +59,7 @@ private:
     QPushButton *buttonStartTest    = nullptr;
     QPushButton *buttonGoToMenu     = nullptr;
     QPushButton *buttonSendToServer = nullptr;
+    QPushButton *buttonSaveAsFile   = nullptr;
     QTimer *timerForWatcher         = nullptr;
 
     std::atomic_bool cpuTestComplete;
@@ -66,6 +67,7 @@ private:
     std::atomic_bool hdiskTestComplete;
     std::atomic_bool queenTestComplete;
     std::atomic_bool zipTestComplete;
+    std::atomic_bool isNeedToUpdateHtmlView;
 
     string htmlPage;
 
@@ -73,6 +75,7 @@ private slots:
     void slotStartTest();
     void slotGoToMenu();
     void slotSendToServer();
+    void slotSaveAsFile();
     void slotWatcherOnCompleteTests();
 
 };

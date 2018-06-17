@@ -46,7 +46,8 @@ private:
 /// \brief The SystemOverview class
 ///
 ///
-class SystemOverview : public QWidget
+class
+        SystemOverview : public QWidget
 {
     Q_OBJECT
 public:
@@ -69,19 +70,24 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent *event);
 
 private:
-    bool lockedUpdateInfo = false;
-    QTimer *timerForUpdateInfo;
-    Subsystem *currentView = nullptr;
+    string htmlPage;
     QPointF currentPosition;
-    MyTreeView *treeView;
-    QPushButton *gotoMenu;
-    QPushButton *sendToServer;
-    QWebEngineView *webView;
+    bool lockedUpdateInfo             = false  ;
+    QTimer *timerForUpdateInfo        = nullptr;
+    Subsystem *currentView            = nullptr;
+    MyTreeView *treeView              = nullptr;
+    QPushButton *gotoMenu             = nullptr;
+    QPushButton *sendToServer         = nullptr;
+    QPushButton *buttonSaveAsFile     = nullptr;
+    QPushButton *buttonSaveAllAsFile  = nullptr;
+    QWebEngineView *webView           = nullptr;
 
 private slots:
     void slotClickTreeView(QTreeWidgetItem *item, int);
     void slotUpdateInfoFromDevice();
     void slotScrollChangePosition(QPointF newPosition);
+    void slotSaveAllAsFile();
+    void slotSaveAsFile();
     void on_pushButton_clicked();
     void on_buttonSend_clicked();
 };

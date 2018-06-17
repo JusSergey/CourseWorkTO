@@ -58,7 +58,7 @@ string HtmlUtils::createTableList(HtmlUtils::IGF args)
         Table bodyTableData(tableData);
         bodyTableData.push_front(tableData.headTitle);
         ssbuffer << rawCreateBodyTable(bodyTableData, args.getColorByPos);
-        ssbuffer << "<br>";
+        ssbuffer << HtmlUtils::getBRTag();
     }
 
     return ssbuffer.str();
@@ -92,6 +92,24 @@ string HtmlUtils::compressHtmlPage(string inputPage)
     }
 
     return inputPage;
+}
+
+std::string HtmlUtils::getEmptyHtmlPage()
+{
+    return
+            "<!DOCTYPE html> \n"
+            "<html>  \n"
+            "<head>  \n"
+            "</head> \n"
+            "<body>  \n"
+            "</body> \n"
+            "</html> \n"
+            ;
+}
+
+std::string HtmlUtils::getBRTag()
+{
+    return "<br>";
 }
 
 std::string HtmlUtils::rawCreateBodyTable(const _Table &tableData, const CallbackColorByPos &colorGetter)

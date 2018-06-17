@@ -58,6 +58,8 @@ public:
     static string createTableList(IGF args);
     static string createCSSStyle(IGF args);
     static string compressHtmlPage(string inputPage);
+    static string getEmptyHtmlPage();
+    static string getBRTag();
 
 private:
     static string rawCreateBodyTable(const _Table &tableData, const CallbackColorByPos &colorGetter);
