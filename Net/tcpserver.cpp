@@ -75,6 +75,8 @@ void TCPServer::disconnectClientFromServer(SocketFD fdClient)
 {
     fdClient.sendMessage("DISCONNECT FROM HOST", TypeMsg::Disconnect);
 
+    std::this_thread::sleep_for(milliseconds(200));
+
     for (SocketFD &fd : _clientsFD)
         if (fd == fdClient) {
             std::cout.flush();

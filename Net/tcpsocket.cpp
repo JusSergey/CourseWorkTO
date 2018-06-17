@@ -114,6 +114,8 @@ bool TCPSocket::readMessage()
 }
 
 void TCPSocket::stop() {
+    //for safe... :(
+    std::this_thread::sleep_for(milliseconds(450));
     if (_running.load()){
         _running.store(false);
         closeSocketFD();
