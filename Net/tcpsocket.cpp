@@ -66,8 +66,7 @@ void TCPSocket::procSpecifiedMsg(Buffer &buff, SocketFD &socket)
     case TypeMsg::ConfirmConnection: specifiedConfirmConnection(buff, socket); break;
     case TypeMsg::Disconnect: specifiedDisconnect(buff, socket); break;
     case TypeMsg::TestConnection: specifiedTectConnection(buff, socket); break;
-    default: (std::cout << _name << ": TCPSocket::procSpecifiedMsg():terminate(code " << (int)_typeMsg << ")").flush();
-        std::terminate();
+    default: throw UndefinedSpecifiedMessage();
     }
 }
 

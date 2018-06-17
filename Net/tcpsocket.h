@@ -46,6 +46,14 @@ public:
     }
 };
 
+class UndefinedSpecifiedMessage : public std::exception {
+public:
+    virtual const char* what() const throw()
+    {
+        return "received undefined specified msg";
+    }
+};
+
 class TCPSocket : public SocketFD
 {
 public:
