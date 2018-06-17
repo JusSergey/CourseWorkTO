@@ -148,7 +148,7 @@ std::string Subsystem::_getDataFromFile(const std::string &pathToFile)
 
 string Subsystem::_getDataFromCommand(const string &command)
 {
-    string filename = "tmpfile";
+    string filename = "/tmp/_coursework_tmpfile.output";
     system(((command + " > ") + filename).c_str());
     string result = _getDataFromFile(filename);
     system((string("rm ") + filename).c_str());

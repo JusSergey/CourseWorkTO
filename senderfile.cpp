@@ -2,11 +2,12 @@
 #include "ui_senderfile.h"
 #include "Utils/StringUtilities.h"
 
-SenderFile::SenderFile(std::string fileToSend, QWidget *parent) :
+SenderFile::SenderFile(std::string fileToSend, std::atomic_bool &setInFinish, QWidget *parent) :
     QWidget(parent),
     fileSend(fileToSend),
     ui(new Ui::SenderFile),
-    fsender(nullptr)
+    fsender(nullptr),
+    _setInFinish(setInFinish)
 {
     ui->setupUi(this);
 }
@@ -33,6 +34,7 @@ void SenderFile::on_pushButton_clicked()
         fsender = new FileSender(IP, PORT);
         fsender->asyncSendFile(std::string("received_")+fileSend, fileSend, [&](const std::string & filename){
             (std::cout << "ЗВІТ НАДІСЛАНО[" << filename << "]\n").flush();
+            _setInFinish.store(true);
         });
     } catch (std::exception &ex) {
         ui->lineIP->clear();

@@ -46,8 +46,7 @@ private:
 /// \brief The SystemOverview class
 ///
 ///
-class
-        SystemOverview : public QWidget
+class SystemOverview : public QWidget
 {
     Q_OBJECT
 public:
@@ -81,6 +80,8 @@ private:
     QPushButton *buttonSaveAsFile     = nullptr;
     QPushButton *buttonSaveAllAsFile  = nullptr;
     QWebEngineView *webView           = nullptr;
+    QTimer *timerWatchdogCompleteSend = nullptr;
+    std::atomic_bool wasSentFile;
 
 private slots:
     void slotClickTreeView(QTreeWidgetItem *item, int);
@@ -88,6 +89,9 @@ private slots:
     void slotScrollChangePosition(QPointF newPosition);
     void slotSaveAllAsFile();
     void slotSaveAsFile();
+    void slotCheckIsSend();
+    void slotSendCurrentDataToServer();
+    void slotSendAllDataToServer();
     void on_pushButton_clicked();
     void on_buttonSend_clicked();
 };

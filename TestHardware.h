@@ -35,7 +35,6 @@ private:
     void connectWatcherTimer();
     void disconnectWatcherTimer();
     void initConnections();
-    void saveToFile(QString namefile);
 
 private:
     void startTestCPU(HtmlUtils::IGF inputDataForHtmlPage);
@@ -60,7 +59,8 @@ private:
     QPushButton *buttonGoToMenu     = nullptr;
     QPushButton *buttonSendToServer = nullptr;
     QPushButton *buttonSaveAsFile   = nullptr;
-    QTimer *timerForWatcher         = nullptr;
+    QTimer *timerForWatchdogTests   = nullptr;
+    QTimer *timerForWatchdogSend    = nullptr;
 
     std::atomic_bool cpuTestComplete;
     std::atomic_bool ramTestComplete;
@@ -68,6 +68,7 @@ private:
     std::atomic_bool queenTestComplete;
     std::atomic_bool zipTestComplete;
     std::atomic_bool isNeedToUpdateHtmlView;
+    std::atomic_bool wasSentFile;
 
     string htmlPage;
 
@@ -76,7 +77,8 @@ private slots:
     void slotGoToMenu();
     void slotSendToServer();
     void slotSaveAsFile();
-    void slotWatcherOnCompleteTests();
+    void slotDogwatcherOnCompleteTests();
+    void slotDogwatcherOnCompleteSend();
 
 };
 

@@ -6,7 +6,8 @@
 class SaverFile {
 public:
     SaverFile() = delete;
-    static void saveLocalFile(const char *data, size_t bufferSize);
+    static void saveLocalFile(QString filename, const char *data, size_t bufferSize);
+    static QString saveLocalFile(const char *data, size_t bufferSize);
 };
 
 #endif // SAVERFILE_H

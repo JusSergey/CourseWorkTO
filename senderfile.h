@@ -13,7 +13,7 @@ class SenderFile : public QWidget
     Q_OBJECT
     std::string fileSend;
 public:
-    explicit SenderFile(std::string fileToSend, QWidget *parent = 0);
+    explicit SenderFile(std::string fileToSend, std::atomic_bool &setInFinish, QWidget *parent = 0);
     ~SenderFile();
 
 private slots:
@@ -22,6 +22,7 @@ private slots:
 private:
     Ui::SenderFile *ui;
     FileSender *fsender;
+    std::atomic_bool &_setInFinish;
 };
 
 #endif // SENDERFILE_H

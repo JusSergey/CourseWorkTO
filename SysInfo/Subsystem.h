@@ -26,7 +26,7 @@ public:
 
     ListStrVects getStructureInfo(const string &src) const;
 
-protected:
+public:
     static string _getDataFromFile(const std::string &pathToFile);
     static string _getDataFromCommand(const std::string &command);
     static string _alignText(const std::string &str);

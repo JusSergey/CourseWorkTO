@@ -4,6 +4,7 @@
 #include "senderfile.h"
 #include "SaverFile.h"
 #include "forms.h"
+#include "utils.h"
 #include <fstream>
 #include <list>
 #include <map>
@@ -50,7 +51,8 @@ SystemOverview::SystemOverview(QWidget *parent) :
     QWidget(parent),
     htmlPage(HtmlUtils::getEmptyHtmlPage()),
     treeView(new MyTreeView(parent)),
-    lockedUpdateInfo(false)
+    lockedUpdateInfo(false),
+    wasSentFile(false)
 {
     init();
 }
@@ -109,8 +111,11 @@ QLayout *SystemOverview::initWebView()
 
 void SystemOverview::initTimerUpdater()
 {
-    timerForUpdateInfo = new QTimer;
+    timerForUpdateInfo = new QTimer(this);
     timerForUpdateInfo->start(1000);
+
+    timerWatchdogCompleteSend = new QTimer(this);
+    timerWatchdogCompleteSend->start(100);
 }
 
 void SystemOverview::mousePressEvent(QMouseEvent *event)
@@ -127,10 +132,11 @@ void SystemOverview::initConnections()
 {
     connect(this->treeView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(slotClickTreeView(QTreeWidgetItem*,int)));
     connect(this->gotoMenu, SIGNAL(clicked(bool)), this, SLOT(on_pushButton_clicked()));
-    connect(this->sendToServer, SIGNAL(clicked(bool)), this, SLOT(on_buttonSend_clicked()));
+    connect(this->sendToServer, SIGNAL(clicked(bool)), this, SLOT(slotSendCurrentDataToServer()));
     connect(this->buttonSaveAsFile, SIGNAL(clicked(bool)), this, SLOT(slotSaveAsFile()));
     connect(this->buttonSaveAllAsFile, SIGNAL(clicked(bool)), this, SLOT(slotSaveAllAsFile()));
     connect(this->webView->page(), SIGNAL(scrollPositionChanged(QPointF)), this, SLOT(slotScrollChangePosition(QPointF)));
+    connect(this->timerWatchdogCompleteSend, SIGNAL(timeout()), this, SLOT(slotCheckIsSend()));
 }
 
 DEVICE SystemOverview::decodeTextNameItem(const QString &name) const
@@ -229,6 +235,27 @@ void SystemOverview::slotSaveAsFile()
     SaverFile::saveLocalFile((const char *)htmlPage.c_str(), htmlPage.length());
 }
 
+void SystemOverview::slotCheckIsSend()
+{
+    if (wasSentFile) {
+        wasSentFile.store(false);
+        QMessageBox::information(nullptr, "", "Звiт надіслано");
+    }
+}
+
+void SystemOverview::slotSendCurrentDataToServer()
+{
+    cout << "slotSendToServer" << std::endl;
+    QString namefile = Utils::generateFilename().c_str();
+    SaverFile::saveLocalFile(namefile, htmlPage.c_str(), htmlPage.length());
+    (new SenderFile(namefile.toStdString(), wasSentFile))->show();
+}
+
+void SystemOverview::slotSendAllDataToServer()
+{
+
+}
+
 void SystemOverview::on_pushButton_clicked()
 {
     Forms::inst()->showMenu();
@@ -266,5 +293,5 @@ void SystemOverview::on_buttonSend_clicked()
     file.flush();
     file.close();
 
-    (new SenderFile(filename))->show();
+    (new SenderFile(filename, wasSentFile))->show();
 }

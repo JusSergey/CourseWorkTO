@@ -74,6 +74,8 @@ public:
         serv->show();
     }
     ~Forms() {
+        if (serv)
+            delete serv;
         if (form)
             delete form;
         if (widg)

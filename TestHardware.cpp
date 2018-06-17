@@ -1,5 +1,6 @@
 #include "TestHardware.h"
 #include "forms.h"
+#include "utils.h"
 #include "senderfile.h"
 #include "Utils/HtmlUtils.h"
 #include "SaverFile.h"
@@ -18,6 +19,7 @@ TestHardware::TestHardware(QWidget *parent)
       queenTestComplete(false),
       zipTestComplete(false),
       isNeedToUpdateHtmlView(false),
+      wasSentFile(false),
       htmlPage(HtmlUtils::getEmptyHtmlPage())
 {
     setWindowTitle("Test Hardware");
@@ -28,7 +30,9 @@ TestHardware::TestHardware(QWidget *parent)
 
 void TestHardware::init()
 {
-    timerForWatcher = new QTimer(this);
+    timerForWatchdogTests = new QTimer(this);
+    timerForWatchdogSend  = new QTimer(this);
+    timerForWatchdogSend->start(300);
     auto horisontalLayout = new QHBoxLayout;
     auto verticalLayout   = new QVBoxLayout;
     verticalLayout->addLayout(initCheckboxes());
@@ -92,13 +96,13 @@ QLayout *TestHardware::initWebview()
 
 void TestHardware::connectWatcherTimer()
 {
-    connect(timerForWatcher, SIGNAL(timeout()), this, SLOT(slotWatcherOnCompleteTests()));
-    timerForWatcher->start(300);
+    connect(timerForWatchdogTests, SIGNAL(timeout()), this, SLOT(slotDogwatcherOnCompleteTests()));
+    timerForWatchdogTests->start(300);
 }
 
 void TestHardware::disconnectWatcherTimer()
 {
-    disconnect(timerForWatcher, SIGNAL(timeout()), this, SLOT(slotWatcherOnCompleteTests()));
+    disconnect(timerForWatchdogTests, SIGNAL(timeout()), this, SLOT(slotDogwatcherOnCompleteTests()));
 }
 
 void TestHardware::initConnections()
@@ -107,11 +111,7 @@ void TestHardware::initConnections()
     connect(buttonGoToMenu,  SIGNAL(clicked(bool)), this, SLOT(slotGoToMenu()));
     connect(buttonSendToServer, SIGNAL(clicked(bool)), this, SLOT(slotSendToServer()));
     connect(buttonSaveAsFile, SIGNAL(clicked(bool)), this, SLOT(slotSaveAsFile()));
-}
-
-void TestHardware::saveToFile(QString namefile)
-{
-
+    connect(timerForWatchdogSend, SIGNAL(timeout()), this, SLOT(slotDogwatcherOnCompleteSend()));
 }
 
 void TestHardware::startTestCPU(HtmlUtils::IGF inputDataForHtmlPage)
@@ -335,9 +335,9 @@ void TestHardware::slotGoToMenu()
 void TestHardware::slotSendToServer()
 {
     cout << "slotSendToServer" << std::endl;
-    QString namefile = QDate::currentDate().toString() + ':' + QTime::currentTime().toString();
-    saveToFile(namefile);
-    (new SenderFile(namefile.toStdString()))->show();
+    QString namefile = Utils::generateFilename().c_str();
+    SaverFile::saveLocalFile(namefile, htmlPage.c_str(), htmlPage.length());
+    (new SenderFile(namefile.toStdString(), wasSentFile))->show();
 }
 
 void TestHardware::slotSaveAsFile()
@@ -345,7 +345,7 @@ void TestHardware::slotSaveAsFile()
     SaverFile::saveLocalFile((const char *)htmlPage.c_str(), htmlPage.length());
 }
 
-void TestHardware::slotWatcherOnCompleteTests()
+void TestHardware::slotDogwatcherOnCompleteTests()
 {
     if (isNeedToUpdateHtmlView.load()) {
         webView->page()->setHtml(QString(htmlPage.c_str()));
@@ -357,5 +357,13 @@ void TestHardware::slotWatcherOnCompleteTests()
         buttonSendToServer->setEnabled(true);
         buttonStartTest->setEnabled(true);
         buttonSaveAsFile->setEnabled(true);
+    }
+}
+
+void TestHardware::slotDogwatcherOnCompleteSend()
+{
+    if (wasSentFile) {
+        wasSentFile.store(false);
+        QMessageBox::information(nullptr, "", "Звіт надіслано");
     }
 }

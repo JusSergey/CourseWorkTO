@@ -4,14 +4,12 @@
 #include <QtWidgets>
 ServerHW::ServerHW(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ServerHW)
+    ui(new Ui::ServerHW),
+    frecver(nullptr)
 {
     ui->setupUi(this);
-    if (frecver) {
-        frecver->stop();
-        delete frecver;
-    }
-
+    ui->buttonStart->setEnabled(true);
+    ui->buttonStop->setEnabled(false);
 }
 
 ServerHW::~ServerHW()
@@ -50,7 +48,10 @@ void ServerHW::startServer()
             ui->linePORT->clear();
             qDebug() << "std::exception" << ex.what();
             QMessageBox::critical(nullptr, "Помилка", "Можливо ви ввели неправильні дані");
+            return;
         }
+        ui->buttonStart->setEnabled(false);
+        ui->buttonStop->setEnabled(true);
     }
 }
 
@@ -60,5 +61,7 @@ void ServerHW::stopServer()
         frecver->stop();
         delete frecver;
         frecver = nullptr;
+        ui->buttonStart->setEnabled(true);
+        ui->buttonStop->setEnabled(false);
     }
 }
