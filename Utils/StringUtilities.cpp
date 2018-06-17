@@ -117,32 +117,6 @@ std::string StringUtil::removeRepeatChars(const std::string &src, char remSymbol
     return result;
 }
 
-bool StringUtil::isValidIPv4(const std::string &src)
-{
-    auto lines(cropToStrings(src, '.'));
-    if (lines.size() != 4)
-        return false;
-
-    for (string num : lines) {
-        if (Number<int>::toNum(num) > 255)
-            return false;
-    }
-
-    return StringUtil::deleteSymbols(StringUtil::deleteNums(src), ".").empty();
-}
-
-bool StringUtil::isValidPort(const std::string &src)
-{
-    if (!StringUtil::deleteNums(src).empty() ||
-         Number<int>::toNum(src) > 65535     ||
-         Number<int>::toNum(src) == 0)
-    {
-        return false;
-    }
-
-    return true;
-}
-
 std::string StringUtil::forEach(const std::string &src, std::function<bool (char)> callback)
 {
     string result;

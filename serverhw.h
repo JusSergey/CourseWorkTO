@@ -18,8 +18,10 @@ public:
 
 private slots:
     void on_buttonStart_clicked();
-
     void on_buttonStop_clicked();
+
+private:
+    void setDefaultFields();
 
 public:
     void startServer();

@@ -62,7 +62,8 @@ SOURCES += \
     Tests/CPUOperations.cpp \
     Tests/HardDriveSpeed.cpp \
     Tests/RAMReadWriteSpeed.cpp \
-    SaverFile.cpp
+    SaverFile.cpp \
+    Utils/NetUtils.cpp
 
 HEADERS += \
         Net/buffer.h \
@@ -112,7 +113,8 @@ HEADERS += \
     Tests/CPUOperations.h \
     Tests/HardDriveSpeed.h \
     Tests/RAMReadWriteSpeed.h \
-    SaverFile.h
+    SaverFile.h \
+    Utils/NetUtils.h
 
 FORMS += \
         widget.ui \

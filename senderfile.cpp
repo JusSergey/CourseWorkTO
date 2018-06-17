@@ -1,6 +1,7 @@
 #include "senderfile.h"
 #include "ui_senderfile.h"
 #include "Utils/StringUtilities.h"
+#include "Utils/NetUtils.h"
 
 SenderFile::SenderFile(std::string fileToSend, std::atomic_bool &setInFinish, QWidget *parent) :
     QWidget(parent),
@@ -28,7 +29,7 @@ void SenderFile::on_pushButton_clicked()
     u_short PORT = ui->linePORT->text().toUShort();
 
     try {
-        if (!StringUtil::isValidIPv4(IP) || !StringUtil::isValidPort(ui->linePORT->text().toStdString())) {
+        if (!NetUtils::isValidIPv4(IP) || !NetUtils::isValidPort(ui->linePORT->text().toStdString())) {
             throw NoValidIpPortException();
         }
         fsender = new FileSender(IP, PORT);
