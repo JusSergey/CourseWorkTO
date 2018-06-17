@@ -1,5 +1,6 @@
 #include "serverhw.h"
 #include "ui_serverhw.h"
+#include "Utils/StringUtilities.h"
 #include <QtWidgets>
 ServerHW::ServerHW(QWidget *parent) :
     QWidget(parent),
@@ -35,11 +36,21 @@ void ServerHW::startServer()
         std::string IP = ui->lineIP->text().toStdString();
         u_short PORT = ui->linePORT->text().toUShort();
 
-        frecver = new FileReceiver(IP, PORT);
-
-        frecver->setCallbackFileSendComplete([](const std::string &filename){
-            (std::cout << "ЗВІТ ПРИЙНЯТО[" << filename << "]\n").flush();
-        });
+        try {
+            if (!StringUtil::isValidIPv4(IP) || !StringUtil::isValidPort(ui->linePORT->text().toStdString())) {
+                throw NoValidIpPortException();
+            }
+            frecver = new FileReceiver(IP, PORT);
+            frecver->setCallbackFileSendComplete([](const std::string &filename){
+                (std::cout << "ЗВІТ ПРИЙНЯТО[" << filename << "]\n").flush();
+            });
+        }
+        catch (std::exception &ex) {
+            ui->lineIP->clear();
+            ui->linePORT->clear();
+            qDebug() << "std::exception" << ex.what();
+            QMessageBox::critical(nullptr, "Помилка", "Можливо ви ввели неправильні дані");
+        }
     }
 }
 

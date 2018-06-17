@@ -39,6 +39,8 @@ public:
 
     static std::string resize(const std::string &src, size_t sz, char aggregate = ' ');
     static std::string removeRepeatChars(const std::string &src, char remSymbol);
+    static bool isValidIPv4(const std::string &src);
+    static bool isValidPort(const std::string &src);
 
 private:
     static std::string forEach(const std::string &src, std::function<bool(char)>);

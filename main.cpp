@@ -5,12 +5,6 @@
 
 #include "Tests/TestRunner.h"
 
-class Tst {
-public:
-    void startTest(){
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 3));
-    }
-};
 #include "Tests/Queen.h"
 #include "Tests/Zipping.h"
 
@@ -28,6 +22,15 @@ public:
 
 int main(int argc, char *argv[])
 {
+
+    std::cout << StringUtil::isValidIPv4("127.0.0.1");
+    std::cout << StringUtil::isValidIPv4("-127.0.0.1");
+    std::cout << StringUtil::isValidIPv4("0.0.0.0");
+    std::cout << StringUtil::isValidIPv4("255.255.255.255");
+    std::cout << StringUtil::isValidIPv4("256.0.0.1");
+    std::cout << StringUtil::isValidIPv4("127.0.1");
+    std::cout << std::endl;
+
     QApplication a(argc, argv);
 
     Forms::inst()->showMenu();

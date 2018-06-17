@@ -5,9 +5,10 @@ TCPServer::TCPServer(const std::string &ip, u_short port) :
     TCPSocket(ip, port)
 {
     if((_serverFD = bind(_fd, (struct sockaddr *)&_sock, sizeof(_sock))) < 0)
-        err(0, "bind(): failed.");
+        throw BindServerException();
 
-    listen(_fd, 8);
+    if (listen(_fd, 8) < 0)
+        throw BindServerException();
 
     unlockfd();
 

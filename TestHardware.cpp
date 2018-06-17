@@ -322,6 +322,7 @@ void TestHardware::slotStartTest()
 
     buttonSendToServer->setEnabled(false);
     buttonStartTest->setEnabled(false);
+    buttonSaveAsFile->setEnabled(false);
     connectWatcherTimer();
 }
 
@@ -355,5 +356,6 @@ void TestHardware::slotWatcherOnCompleteTests()
         disconnectWatcherTimer();
         buttonSendToServer->setEnabled(true);
         buttonStartTest->setEnabled(true);
+        buttonSaveAsFile->setEnabled(true);
     }
 }

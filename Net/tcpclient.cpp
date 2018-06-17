@@ -9,8 +9,7 @@ TCPClient::TCPClient(const std::string &ip, u_short port) :
 {
     int isConnected = connect(_fd, (sockaddr*)&_sock, sizeof(_sock));
     if (isConnected < 0) {
-        err(isConnected, "connect(): failed.");
-        exit(-1);
+        throw ConnectionRefusedException();
     }
 
     unlockfd();

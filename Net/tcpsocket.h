@@ -15,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #include <type_traits>
+#include <exception>
 #include "typedefs.h"
 
 //namespace Net {
@@ -28,6 +29,22 @@ using namespace std::chrono;
 
 constexpr auto MAX_SIZE_PACKET = UINT16_MAX - sizeof(uint16) - sizeof(TypeMsg) - 512 /*for safe*/;
 constexpr auto DELAY_TIME = 1; //ms
+
+class CreateSocketException : public std::exception {
+public:
+    virtual const char* what() const throw()
+    {
+        return "failed while creating new socket";
+    }
+};
+
+class NoValidIpPortException : public std::exception {
+public:
+    virtual const char* what() const throw()
+    {
+        return "No valid Ip or Port";
+    }
+};
 
 class TCPSocket : public SocketFD
 {

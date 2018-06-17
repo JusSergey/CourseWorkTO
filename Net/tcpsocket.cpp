@@ -26,8 +26,8 @@ TCPSocket::TCPSocket(const std::string &ip, uint16 port) :
     memset(&_sock, '\0', sizeof(_sock));
 
     _fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (_fd < 0)
-        err(_fd, "socket()");
+    if (_fd < 0 || port == 0)
+        throw CreateSocketException();
 
     _sock.sin_family = AF_INET;
     _sock.sin_port = htons(_port);
