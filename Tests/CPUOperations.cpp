@@ -2,7 +2,7 @@
 #include <random>
 #include <ctime>
 
-#define SIZE (1024*16)
+#define SIZE (1024*8)
 #define SIZE_SIZE (SIZE * SIZE)
 
 void CPU::AbstractCache::cacheTest()
@@ -10,7 +10,7 @@ void CPU::AbstractCache::cacheTest()
     register int i, j, k = 0;
     for (i = 0; i < SIZE; ++i){
         for (j = 0; j < SIZE; ++j){
-            buffer[ indexToCellRAM[k] ][ indexToCellRAM[k+1] ] = 1;
+            buffer[ indexToCellRAM[k] ][ indexToCellRAM[k+1] ] = 0xABCDEF;
             ++k;
         }
     }
@@ -18,9 +18,9 @@ void CPU::AbstractCache::cacheTest()
 
 void CPU::AbstractCache::preparationBeforeTest()
 {
-    buffer = new char*[SIZE];
+    buffer = new int_fast64_t*[SIZE];
     for (int i = 0; i < SIZE; ++i)
-        buffer[i] = new char[SIZE];
+        buffer[i] = new int_fast64_t[SIZE];
 
     fillIndexContainer();
 }
@@ -38,20 +38,35 @@ void CPU::AbstractCache::startTest()
     cacheTest();
 }
 
+size_t CPU::AbstractCache::getSizeComputingDataMBytes()
+{
+    return SIZE*SIZE*sizeof(**buffer) / 1048576;
+}
+
 void CPU::NoUseCache::fillIndexContainer()
 {
     indexToCellRAM.resize(SIZE_SIZE+1);
     std::mt19937 gen;
     gen.seed(time(0));
-    for (int i = 0; i < indexToCellRAM.size(); ++i) {
+    for (size_t i = 0; i < indexToCellRAM.size(); ++i) {
         indexToCellRAM[i] = gen() % SIZE;
     }
 }
 
-void CPU::Cache::fillIndexContainer()
+void CPU::NoUseCache::setBallForThisTest(ResultTest &test)
+{
+    test.ball = 100;
+}
+
+void CPU::UseCache::fillIndexContainer()
 {
     indexToCellRAM.resize(SIZE_SIZE+1);
-    for (int i = 0; i < indexToCellRAM.size(); ++i) {
+    for (size_t i = 0; i < indexToCellRAM.size(); ++i) {
         indexToCellRAM[i] = i % SIZE;
     }
+}
+
+void CPU::UseCache::setBallForThisTest(ResultTest &test)
+{
+    test.ball = 100;
 }

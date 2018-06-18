@@ -18,6 +18,8 @@ TestHardware::TestHardware(QWidget *parent)
       hdiskTestComplete(false),
       queenTestComplete(false),
       zipTestComplete(false),
+      cpuUseCache(false),
+      cpuNoUseCache(false),
       isNeedToUpdateHtmlView(false),
       wasSentFile(false),
       htmlPage(HtmlUtils::getEmptyHtmlPage())
@@ -66,7 +68,9 @@ QLayout *TestHardware::initCheckboxes()
 {
     return abstractInit<QCheckBox, QVBoxLayout>(
     {
-        std::make_tuple(&checkCPU, "CPU"),
+        std::make_tuple(&checkCPU, "CPU Arithmetic"),
+        std::make_tuple(&checkCPUUseCache, "CPU Enable cache"),
+        std::make_tuple(&checkCPUNoUseCache, "CPU Disable cache"),
         std::make_tuple(&checkRAM, "RAM"),
         std::make_tuple(&checkHardDrive, "HardDrive"),
         std::make_tuple(&checkQueenTest, "Queen Test"),
@@ -177,6 +181,38 @@ void TestHardware::startTestCPU(HtmlUtils::IGF inputDataForHtmlPage)
     cpuTestComplete.store(true);
 }
 
+void TestHardware::startCPUUseCache(HtmlUtils::IGF inputDataForHtmlPage)
+{
+    condition_variable cv;
+    ResultTest::Ptr result = TestRunner<CPU::UseCache>::startInCurrentThread(cv);
+
+    HtmlUtils::Table tableCPUUseCache;
+    tableCPUUseCache.nameTest = "Обробка з оптимізацією кешу";
+    tableCPUUseCache.headTitle = {"Розмір/МБайт", "Час/сек"};
+    tableCPUUseCache.push_back({Number<size_t>::toStr(CPU::AbstractCache::getSizeComputingDataMBytes()),
+                                Number<float>::toStr(result->sec)});
+
+    inputDataForHtmlPage.listTables.push_back(std::move(tableCPUUseCache));
+
+    cpuUseCache.store(true);
+}
+
+void TestHardware::startCPUNoUseCache(HtmlUtils::IGF inputDataForHtmlPage)
+{
+    condition_variable cv;
+    ResultTest::Ptr result = TestRunner<CPU::NoUseCache>::startInCurrentThread(cv);
+
+    HtmlUtils::Table tableCPUNoUseCache;
+    tableCPUNoUseCache.nameTest = "Обробка без оптимізації кешу";
+    tableCPUNoUseCache.headTitle = {"Розмір/МБайт", "Час/сек"};
+    tableCPUNoUseCache.push_back({Number<size_t>::toStr(CPU::AbstractCache::getSizeComputingDataMBytes()),
+                                  Number<float>::toStr(result->sec)});
+
+    inputDataForHtmlPage.listTables.push_back(std::move(tableCPUNoUseCache));
+
+    cpuNoUseCache.store(true);
+}
+
 void TestHardware::startTestRAM(HtmlUtils::IGF inputDataForHtmlPage)
 {
     condition_variable cv;
@@ -266,7 +302,9 @@ bool TestHardware::isAllTestsComplete() const
             ramTestComplete   &&
             zipTestComplete   &&
             hdiskTestComplete &&
-            queenTestComplete);
+            queenTestComplete &&
+            cpuUseCache       &&
+            cpuNoUseCache);
 }
 
 void TestHardware::startTest()
@@ -281,6 +319,20 @@ void TestHardware::startTest()
         isNeedToUpdateHtmlView.store(true);
         htmlPage = HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
     } else cpuTestComplete.store(true);
+
+    if (checkCPUUseCache->isChecked()) {
+        cpuUseCache.store(false);
+        startCPUUseCache(dataToCreateHtmlPage);
+        isNeedToUpdateHtmlView.store(true);
+        htmlPage = HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
+    } else cpuUseCache.store(true);
+
+    if (checkCPUNoUseCache->isChecked()) {
+        cpuNoUseCache.store(false);
+        startCPUNoUseCache(dataToCreateHtmlPage);
+        isNeedToUpdateHtmlView.store(true);
+        htmlPage = HtmlUtils::createAndGetHtmlPage(dataToCreateHtmlPage);
+    } else cpuNoUseCache.store(true);
 
     if (checkHardDrive->isChecked()) {
         hdiskTestComplete.store(false);

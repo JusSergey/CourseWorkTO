@@ -67,7 +67,7 @@ void CPUOperations<NumberType>::testTemplateValue()
 class AbstractCache : public TestAbstract {
 protected:
     vector<int_fast32_t> indexToCellRAM;
-    char **buffer;
+    int_fast64_t **buffer;
 protected:
     void cacheTest();
     virtual void fillIndexContainer() = 0;
@@ -75,13 +75,15 @@ public:
     virtual void preparationBeforeTest() override;
     virtual void preparationAfterTest() override;
     virtual void startTest() override;
+    static size_t getSizeComputingDataMBytes();
 };
 
-class Cache : public AbstractCache {
+class UseCache : public AbstractCache {
 public:
-    Cache() = default;
-    ~Cache() = default;
+    UseCache() = default;
+    ~UseCache() = default;
     virtual void fillIndexContainer();
+    virtual void setBallForThisTest(ResultTest &test) override;
 };
 
 class NoUseCache : public AbstractCache {
@@ -89,6 +91,7 @@ public:
     NoUseCache() = default;
     ~NoUseCache() = default;
     virtual void fillIndexContainer();
+    virtual void setBallForThisTest(ResultTest &test) override;
 };
 
 }

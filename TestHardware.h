@@ -38,6 +38,8 @@ private:
 
 private:
     void startTestCPU(HtmlUtils::IGF inputDataForHtmlPage);
+    void startCPUUseCache(HtmlUtils::IGF inputDataForHtmlPage);
+    void startCPUNoUseCache(HtmlUtils::IGF inputDataForHtmlPage);
     void startTestRAM(HtmlUtils::IGF inputDataForHtmlPage);
     void startTestHardDrive(HtmlUtils::IGF inputDataForHtmlPage);
     void startTestQueen(HtmlUtils::IGF inputDataForHtmlPage);
@@ -55,6 +57,8 @@ private:
     QCheckBox *checkHardDrive       = nullptr;
     QCheckBox *checkQueenTest       = nullptr;
     QCheckBox *checkZIPTest         = nullptr;
+    QCheckBox *checkCPUUseCache     = nullptr;
+    QCheckBox *checkCPUNoUseCache   = nullptr;
     QPushButton *buttonStartTest    = nullptr;
     QPushButton *buttonGoToMenu     = nullptr;
     QPushButton *buttonSendToServer = nullptr;
@@ -67,6 +71,9 @@ private:
     std::atomic_bool hdiskTestComplete;
     std::atomic_bool queenTestComplete;
     std::atomic_bool zipTestComplete;
+    std::atomic_bool cpuUseCache;
+    std::atomic_bool cpuNoUseCache;
+
     std::atomic_bool isNeedToUpdateHtmlView;
     std::atomic_bool wasSentFile;
 
