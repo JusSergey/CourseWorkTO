@@ -22,7 +22,7 @@ void Queen::preparationAfterTest()
 
 void Queen::setBallForThisTest(ResultTest &test)
 {
-    TestAbstract::basicComputeBallOftest(1.F, test.sec, 100.F);
+    test.ball = 100.F / test.sec;
 }
 
 Queen::~Queen() {

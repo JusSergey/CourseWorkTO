@@ -59,7 +59,9 @@ void HardDriveSpeedWrite::preparationAfterTest()
 
 void HardDriveSpeedWrite::setBallForThisTest(ResultTest &test)
 {
-    test.ball = static_cast<int>(((float)_szFile / 512.f) / test.sec);
+    const float MBytes = (float)_szFile;
+    test.ball = static_cast<int>(MBytes / test.sec / 10);
+    cout << "HDWRITE: " << test.ball << std::endl;
 }
 
 
@@ -105,5 +107,7 @@ void HardDriveSpeedRead::preparationAfterTest()
 void HardDriveSpeedRead::setBallForThisTest(ResultTest &test)
 {
     //wasBeenRead - in bytes. wasBeenRead/1048576 is meeans as convert to MBytes
-    static_cast<int>(((float)(wasBeenRead/1048576) / 1024.f) / test.sec)*80;
+    const float MBytes = (float)wasBeenRead / 1048576;
+    test.ball = static_cast<int>(MBytes / test.sec / (2048/100));
+    cout << "HDREAD: " << test.ball << std::endl;
 }

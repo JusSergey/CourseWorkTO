@@ -40,7 +40,7 @@ void CPU::AbstractCache::startTest()
 
 size_t CPU::AbstractCache::getSizeComputingDataMBytes()
 {
-    return SIZE*SIZE*sizeof(**buffer) / 1048576;
+    return SIZE*SIZE*sizeof(**buffer) / 1048576 + SIZE*SIZE*sizeof(indexToCellRAM[0])*2 / 1048576 + SIZE*SIZE*sizeof(int) / 1048576;
 }
 
 void CPU::NoUseCache::fillIndexContainer()
@@ -55,7 +55,7 @@ void CPU::NoUseCache::fillIndexContainer()
 
 void CPU::NoUseCache::setBallForThisTest(ResultTest &test)
 {
-    test.ball = 100;
+    test.ball = 90.F / test.sec;
 }
 
 void CPU::UseCache::fillIndexContainer()
@@ -68,5 +68,5 @@ void CPU::UseCache::fillIndexContainer()
 
 void CPU::UseCache::setBallForThisTest(ResultTest &test)
 {
-    test.ball = 100;
+    test.ball = 50.F / test.sec;
 }

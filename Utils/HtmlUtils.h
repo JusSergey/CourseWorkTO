@@ -15,30 +15,42 @@ private:
 public:
     struct Table : public _Table {
         template <typename ...Args>
-        Table(Args&&... args) : _Table(std::forward<Args>(args)...){}
-        TableRow headTitle;
-        string nameTest = "This is a title";
+        Table(Args&&... args) :
+            _Table(std::forward<Args>(args)...),
+            getColorByPos(getDefaultColorByPos()),
+            getColorTitle(getDefaultColorTitle()) {}
+
+        TableRow fieldsNames;
+        string nameTable;
+
+        CallbackColorByPos getColorByPos;
+        CallbackColorByPos getColorTitle;
+
+        static CallbackColorByPos getDefaultColorByPos() {
+            return [](int row, int col, string text)
+            {
+                (void)col;
+                (void)text;
+                return row == 0 ? "#d0d0d0" :
+                       row  & 1 ? "#f0f0f0" : "#ffFFff";
+            };
+        }
+
+        static CallbackColorByPos getDefaultColorTitle() {
+            return [](int row, int col, string text)
+            {
+                (void)row;
+                (void)col;
+                (void)text;
+                return "#c0baba";
+            };
+        }
+
     };
     using ListTables = list<Table>;
 
 public:
     struct InfoGenerateFile {
-        CallbackColorByPos getColorByPos =
-                [](int row, int col)
-        {
-            (void)col;
-            return row == 0 ? "#d0d0d0" :
-                   row  & 1 ? "#f0f0f0" : "#ffFFff";
-        };
-
-        CallbackColorByPos getColorTitle =
-                [](int row, int col)
-        {
-            (void)row;
-            (void)col;
-            return "#c0baba";
-        };
-
         string pageTitle;
         string outfile = "default.html";
         TableRow headTitle;
@@ -60,6 +72,7 @@ public:
     static string compressHtmlPage(string inputPage);
     static string getEmptyHtmlPage();
     static string getBRTag();
+    static string getColotFromBall(int ball);
 
 private:
     static string rawCreateBodyTable(const _Table &tableData, const CallbackColorByPos &colorGetter);

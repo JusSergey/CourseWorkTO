@@ -53,11 +53,12 @@ string HtmlUtils::createTableList(HtmlUtils::IGF args)
     stringstream ssbuffer;
 
     for (Table &tableData : args.listTables) {
-        ssbuffer << rawCreateBodyTable(_Table({TableRow{tableData.nameTest}}), args.getColorTitle);
+        if (!tableData.nameTable.empty())
+            ssbuffer << rawCreateBodyTable(_Table({TableRow{tableData.nameTable}}), tableData.getColorTitle);
 
         Table bodyTableData(tableData);
-        bodyTableData.push_front(tableData.headTitle);
-        ssbuffer << rawCreateBodyTable(bodyTableData, args.getColorByPos);
+        bodyTableData.push_front(tableData.fieldsNames);
+        ssbuffer << rawCreateBodyTable(bodyTableData, tableData.getColorByPos);
         ssbuffer << HtmlUtils::getBRTag();
     }
 
@@ -112,6 +113,26 @@ std::string HtmlUtils::getBRTag()
     return "<br>";
 }
 
+std::string HtmlUtils::getColotFromBall(int ball)
+{
+    cout << "get color ball origin: " << ball << std::endl;
+    ball = ball < 40 ? 40 : ball > 110 ? 110 : ball;
+    ball -= (85 - ball)*0.5;
+cout << "get color ball: " << ball << std::endl;
+    ball = ball < 40 ? 40 : ball > 110 ? 110 : ball;
+
+    static const uint8_t min = 0x88;
+    static const uint8_t max = 0xEE;
+    static const float per = ((float)max - (float)min) / 100.F;
+
+    const uint8_t colorG = min + uint8_t(per * ball);
+    const uint8_t colorR = max - uint8_t(per * ball);
+
+    stringstream ss;
+    ss << "#" << std::hex << (int)colorR << (int)colorG << "88";
+    return ss.str();
+}
+
 std::string HtmlUtils::rawCreateBodyTable(const _Table &tableData, const CallbackColorByPos &colorGetter)
 {
     auto createOneLine = [&](const StringVector &args,
@@ -120,10 +141,10 @@ std::string HtmlUtils::rawCreateBodyTable(const _Table &tableData, const Callbac
     {
         stringstream ssSmallBuffer;
 
-        ssSmallBuffer     << "<tr>                                                                \n";
+        ssSmallBuffer     << "<tr> \n";
         for (size_t col = 0; col < args.size(); ++col)
-            ssSmallBuffer << "  <th bgcolor=" << getColor(row, col) << ">" << args[col] << "</th> \n";
-        ssSmallBuffer     << "</tr>                                                               \n";
+            ssSmallBuffer << "  <th bgcolor=" << getColor(row, col, args[col]) << ">" << args[col] << "</th> \n";
+        ssSmallBuffer     << "</tr>\n";
 
         return ssSmallBuffer.str();
     };

@@ -68,13 +68,13 @@ QLayout *TestHardware::initCheckboxes()
 {
     return abstractInit<QCheckBox, QVBoxLayout>(
     {
-        std::make_tuple(&checkCPU, "CPU Arithmetic"),
-        std::make_tuple(&checkCPUUseCache, "CPU Enable cache"),
-        std::make_tuple(&checkCPUNoUseCache, "CPU Disable cache"),
-        std::make_tuple(&checkRAM, "RAM"),
-        std::make_tuple(&checkHardDrive, "HardDrive"),
-        std::make_tuple(&checkQueenTest, "Queen Test"),
-        std::make_tuple(&checkZIPTest, "ZIP Test")
+        std::make_tuple(&checkCPU, "ЦП АЛП"),
+        std::make_tuple(&checkCPUUseCache, "ЦП Обробка даних + кеш"),
+        std::make_tuple(&checkCPUNoUseCache, "ЦП Проста обробка даних"),
+        std::make_tuple(&checkRAM, "Оперативна пам'ять"),
+        std::make_tuple(&checkHardDrive, "Жорсткий диск"),
+        std::make_tuple(&checkQueenTest, "Тест Queen"),
+        std::make_tuple(&checkZIPTest, "Архівування ZIP")
     }, this);
 }
 
@@ -121,12 +121,9 @@ void TestHardware::initConnections()
 void TestHardware::startTestCPU(HtmlUtils::IGF inputDataForHtmlPage)
 {
     static constexpr size_t TITLE = 0;
-    static constexpr size_t TIME  = 1;
-    static constexpr size_t TYPE  = 2;
-    static constexpr size_t DESC  = 3;
-    static constexpr size_t END   = 4;
+    static constexpr size_t TYPE  = 1;
 
-    enum class TestTypes { x8, x16, x32, x64, ux8, ux16, ux32, ux64, _float, _double, _ldouble, _ufloat, _udouble, _uldouble };
+    enum class TestTypes { x8 = 0, x16, x32, x64, ux8, ux16, ux32, ux64, _float, _double, _ldouble, _ufloat, _udouble, _uldouble };
 
     auto nth = new ThreadPool(4);
     ThreadPool &threads = *nth;
@@ -148,33 +145,51 @@ void TestHardware::startTestCPU(HtmlUtils::IGF inputDataForHtmlPage)
     threads.waitAll();
     threads.stopAllThreads();
 
-    using TupleT = std::tuple<string, float, string>;
+    using TupleT = std::tuple<string, TestTypes>;
 
     HtmlUtils::Table testCPUTable;
 
-    testCPUTable.nameTest = " CPU Test";
+    testCPUTable.nameTable = " CPU Test";
 
-    testCPUTable.headTitle.push_back("Тип даних");
-    testCPUTable.headTitle.push_back("Результат");
-    testCPUTable.headTitle.push_back("Тип");
+    testCPUTable.fieldsNames.push_back("Тип даних");
+    testCPUTable.fieldsNames.push_back("Результат");
 
+    float accumulateBalls(0);
+    int countTests(0);
     for (TupleT t : {
-         std::make_tuple("8 bit integer", (float)df[TestTypes::x8]->microsec / 1000000.f, "signed"),
-         std::make_tuple("16 bit integer", (float)df[TestTypes::x16]->microsec / 1000000.f, "signed"),
-         std::make_tuple("32 bit integer", (float)df[TestTypes::x32]->microsec / 1000000.f, "signed"),
-         std::make_tuple("64 bit integer", (float)df[TestTypes::x64]->microsec / 1000000.f, "signed"),
-         std::make_tuple("8 bit integer", (float)df[TestTypes::ux8]->microsec / 1000000.f, "unsigned"),
-         std::make_tuple("16 bit integer", (float)df[TestTypes::ux16]->microsec / 1000000.f, "unsigned"),
-         std::make_tuple("32 bit integer", (float)df[TestTypes::ux32]->microsec / 1000000.f, "unsigned"),
-         std::make_tuple("64 bit integer", (float)df[TestTypes::ux64]->microsec / 1000000.f, "unsigned"),
-         std::make_tuple("float", (float)df[TestTypes::_float]->microsec / 1000000.f, "only signed"),
-         std::make_tuple("double", (float)df[TestTypes::_double]->microsec / 1000000.f, "only signed"),
-         std::make_tuple("long double", (float)df[TestTypes::_ldouble]->microsec / 1000000.f, "only signed")})
+         std::make_tuple("8  бітне ціле знакове", TestTypes::x8),
+         std::make_tuple("16 бітне ціле знакове", TestTypes::x16),
+         std::make_tuple("32 бітне ціле знакове", TestTypes::x32),
+         std::make_tuple("64 бітне ціле знакове", TestTypes::x64),
+         std::make_tuple("8  бітне ціле беззнакове", TestTypes::ux8),
+         std::make_tuple("16 бітне ціле беззнакове", TestTypes::ux16),
+         std::make_tuple("32 бітне ціле беззнакове", TestTypes::ux32),
+         std::make_tuple("64 бітне ціле беззнакове", TestTypes::ux64),
+         std::make_tuple("32 бітне дробове", TestTypes::_float),
+         std::make_tuple("64 бітне дробове", TestTypes::_double),
+         std::make_tuple("80 бітне дробове", TestTypes::_ldouble)})
     {
+        TestTypes type = std::get<TYPE>(t);
+        accumulateBalls += static_cast<float>(df[type]->ball);
         testCPUTable.push_back(
-                     StringVector {std::get<TITLE>(t), Number<float>::toStr(std::get<TIME>(t)), std::get<TYPE>(t)}
+            StringVector { std::get<TITLE>(t), Number<float>::toStr(df[type]->sec) }
         );
+        countTests++;
     }
+    const int MediumBall = accumulateBalls / countTests;
+    testCPUTable.push_back(StringVector { "Середній Бал",  Number<int>::toStr(MediumBall) } );
+
+    vector<int> balls;
+    for (const auto &dfp : df)
+        balls.push_back(dfp.second->ball);
+
+    balls.push_back(MediumBall);
+
+    testCPUTable.getColorByPos = [balls](int row, int col, string text) -> string {
+        std::cout << "apu ar: " << text << ':' << balls[row-1] << std::endl;
+        return col == 1 && row ? HtmlUtils::getColotFromBall(balls[row-1])
+                               : HtmlUtils::Table::getDefaultColorByPos()(row, col, text);
+    };
 
     inputDataForHtmlPage.listTables.emplace_back(std::move(testCPUTable));
 
@@ -187,10 +202,19 @@ void TestHardware::startCPUUseCache(HtmlUtils::IGF inputDataForHtmlPage)
     ResultTest::Ptr result = TestRunner<CPU::UseCache>::startInCurrentThread(cv);
 
     HtmlUtils::Table tableCPUUseCache;
-    tableCPUUseCache.nameTest = "Обробка з оптимізацією кешу";
-    tableCPUUseCache.headTitle = {"Розмір/МБайт", "Час/сек"};
-    tableCPUUseCache.push_back({Number<size_t>::toStr(CPU::AbstractCache::getSizeComputingDataMBytes()),
-                                Number<float>::toStr(result->sec)});
+    tableCPUUseCache.nameTable = "Обробка з оптимізацією кешу";
+    tableCPUUseCache.fieldsNames = {"Опис", "Значення"};
+    tableCPUUseCache.push_back({Number<size_t>::toStr(CPU::AbstractCache::getSizeComputingDataMBytes()) + " МБайт",
+                                Number<float>::toStr(result->sec) + " сек"});
+
+    tableCPUUseCache.push_back(StringVector { "Бал",  Number<float>::toStr(result->ball) } );
+
+    int ball = result->ball;
+
+    tableCPUUseCache.getColorByPos = [ball](int row, int col, string text) -> string {
+        return col == 1 && row ? HtmlUtils::getColotFromBall(ball)
+                               : HtmlUtils::Table::getDefaultColorByPos()(row, col, text);
+    };
 
     inputDataForHtmlPage.listTables.push_back(std::move(tableCPUUseCache));
 
@@ -203,10 +227,19 @@ void TestHardware::startCPUNoUseCache(HtmlUtils::IGF inputDataForHtmlPage)
     ResultTest::Ptr result = TestRunner<CPU::NoUseCache>::startInCurrentThread(cv);
 
     HtmlUtils::Table tableCPUNoUseCache;
-    tableCPUNoUseCache.nameTest = "Обробка без оптимізації кешу";
-    tableCPUNoUseCache.headTitle = {"Розмір/МБайт", "Час/сек"};
-    tableCPUNoUseCache.push_back({Number<size_t>::toStr(CPU::AbstractCache::getSizeComputingDataMBytes()),
-                                  Number<float>::toStr(result->sec)});
+    tableCPUNoUseCache.nameTable = "Обробка без оптимізації кешу";
+    tableCPUNoUseCache.fieldsNames = {"Опис", "Значення"};
+    tableCPUNoUseCache.push_back({Number<size_t>::toStr(CPU::AbstractCache::getSizeComputingDataMBytes()) + " МБайт",
+                                  Number<float>::toStr(result->sec) + " сек"});
+
+    tableCPUNoUseCache.push_back(StringVector { "Бал",  Number<float>::toStr(result->ball) } );
+
+    int ball = result->ball;
+
+    tableCPUNoUseCache.getColorByPos = [ball](int row, int col, string text) -> string {
+        return col == 1 && row ? HtmlUtils::getColotFromBall(ball)
+                               : HtmlUtils::Table::getDefaultColorByPos()(row, col, text);
+    };
 
     inputDataForHtmlPage.listTables.push_back(std::move(tableCPUNoUseCache));
 
@@ -216,15 +249,26 @@ void TestHardware::startCPUNoUseCache(HtmlUtils::IGF inputDataForHtmlPage)
 void TestHardware::startTestRAM(HtmlUtils::IGF inputDataForHtmlPage)
 {
     condition_variable cv;
-    auto resultRW = TestRunner<RAMReadWriteSpeed>::startInCurrentThread(cv);
+    ResultTest::Ptr result = TestRunner<RAMReadWriteSpeed>::startInCurrentThread(cv);
 
-    int rwSpeed = (float)RAMReadWriteSpeed::getTestDataSizeInMBytes() / resultRW->sec;
+    int rwSpeed = (float)RAMReadWriteSpeed::getTestDataSizeInMBytes() / result->sec;
 
     HtmlUtils::Table testRAMTable;
-    testRAMTable.nameTest = "Ram Test";
-    testRAMTable.headTitle.push_back("Description");
-    testRAMTable.headTitle.push_back("Speed");
+    testRAMTable.nameTable = "Ram Test";
+    testRAMTable.fieldsNames.push_back("Description");
+    testRAMTable.fieldsNames.push_back("Speed");
     testRAMTable.push_back({"Test Read/Write speed", Number<int64_t>::toStr(rwSpeed) + "MB/sec"});
+
+    testRAMTable.push_back(StringVector { "Бал",  Number<float>::toStr(result->ball) } );
+
+    int ball = result->ball;
+
+    testRAMTable.getColorByPos = [ball](int row, int col, string text) -> string {
+
+        return col == 1 && row ? HtmlUtils::getColotFromBall(ball)
+                               : HtmlUtils::Table::getDefaultColorByPos()(row, col, text);
+    };
+
     inputDataForHtmlPage.listTables.emplace_back(std::move(testRAMTable));
 
     ramTestComplete.store(true);
@@ -249,13 +293,23 @@ void TestHardware::startTestHardDrive(HtmlUtils::IGF inputDataForHtmlPage)
 
     // adding result of test
     HtmlUtils::Table testHardDriveTable;
-    testHardDriveTable.nameTest = "Hard Disk Test";
-    testHardDriveTable.headTitle.push_back("Description");
-    testHardDriveTable.headTitle.push_back("Speed");
+    testHardDriveTable.nameTable = "Hard Disk Test";
+    testHardDriveTable.fieldsNames.push_back("Description");
+    testHardDriveTable.fieldsNames.push_back("Speed");
     testHardDriveTable.push_back({"Test Write Hard Drive",
                                          Number<int>::toStr(writeSpeed) + "MB/sec"});
     testHardDriveTable.push_back({"Test Read Hard Drive",
                                          Number<int>::toStr(readSpeed) + "MB/sec"});
+
+    testHardDriveTable.push_back(StringVector { "Середній Бал",  Number<int>::toStr((resultWrite->ball + resultRead->ball) / 2) } );
+
+    vector<int> balls {resultWrite->ball, resultRead->ball, (resultWrite->ball + resultRead->ball) / 2};
+
+    testHardDriveTable.getColorByPos = [balls](int row, int col, string text) -> string {
+        return col == 1 && row ? HtmlUtils::getColotFromBall(balls[row-1])
+                               : HtmlUtils::Table::getDefaultColorByPos()(row, col, text);
+    };
+
     inputDataForHtmlPage.listTables.emplace_back(std::move(testHardDriveTable));
 
     //set flag of complete test
@@ -268,9 +322,18 @@ void TestHardware::startTestQueen(HtmlUtils::IGF inputDataForHtmlPage)
     ResultTest::Ptr result(TestRunner<Queen>::startInCurrentThread(cv));
 
     HtmlUtils::Table tableOfQueen;
-    tableOfQueen.nameTest = "Queen Test";
-    tableOfQueen.headTitle = {"Опис", "бал 1/10"};
-    tableOfQueen.push_back({"бал", Number<float>::toStr(result->sec)});
+    tableOfQueen.nameTable = "Queen Test";
+    tableOfQueen.fieldsNames = {"Опис", "Значення"};
+    tableOfQueen.push_back({"Час", Number<float>::toStr(result->sec)});
+
+    tableOfQueen.push_back(StringVector { "Бал",  Number<float>::toStr(result->ball) } );
+
+    const int ball = result->ball;
+
+    tableOfQueen.getColorByPos = [ball](int row, int col, string text) -> string {
+        return col == 1 && row ? HtmlUtils::getColotFromBall(ball)
+                               : HtmlUtils::Table::getDefaultColorByPos()(row, col, text);
+    };
 
     inputDataForHtmlPage.listTables.push_back(std::move(tableOfQueen));
 
@@ -285,14 +348,22 @@ void TestHardware::startTestZIP(HtmlUtils::IGF inputDataForHtmlPage)
 
     HtmlUtils::Table tableOfZip;
 
-    tableOfZip.nameTest = "Стиснення за допомогою zip архіватора";
-    tableOfZip.headTitle = {"Операція", "Розмір данних", "Час роботи"};
+    tableOfZip.nameTable = "Стиснення за допомогою zip архіватора";
+    tableOfZip.fieldsNames = {"Опис", "Розмір данних", "Час роботи"};
 
     tableOfZip.push_back({"Стиснення", Number<size_t>::toStr(ZipCompress::getSizeFile())   + "MBytes", Number<float>::toStr(resultCompress->sec)});
     tableOfZip.push_back({"Екстракт" , Number<size_t>::toStr(ZipUncompress::getSizeFile()) + "MBytes", Number<float>::toStr(resultUncompress->sec)});
 
-    inputDataForHtmlPage.listTables.push_back(std::move(tableOfZip));
+    tableOfZip.push_back(StringVector { "Середній Бал", "", Number<float>::toStr((resultCompress->ball + resultUncompress->ball) / 2) } );
 
+    vector<int> balls {resultCompress->ball, resultUncompress->ball, (resultCompress->ball+resultUncompress->ball) / 2};
+
+    tableOfZip.getColorByPos = [balls](int row, int col, string text) -> string {
+        return col == 2 && row ? HtmlUtils::getColotFromBall(balls[row-1])
+                               : HtmlUtils::Table::getDefaultColorByPos()(row, col, text);
+    };
+
+    inputDataForHtmlPage.listTables.push_back(std::move(tableOfZip));
     zipTestComplete.store(true);
 }
 

@@ -6,29 +6,22 @@
 #include "SysInfo/Subsystem.h"
 #include <map>
 
-
-
 static std::map<DEVICE, QString> AllModulesMap {
     std::make_pair(DEVICE::UNDEFINED, "UNDEFINED"),
-    std::make_pair(DEVICE::PC, "PC"),
-    std::make_pair(DEVICE::HARDWARE, "HARDWARE"),
-    std::make_pair(DEVICE::OS, "OS"),
-    std::make_pair(DEVICE::CPU, "CPU"),
+    std::make_pair(DEVICE::PC, "ПК"),
+    std::make_pair(DEVICE::HARDWARE, "Компоненти ПК"),
+    std::make_pair(DEVICE::OS, "Компоненти ОС"),
+    std::make_pair(DEVICE::CPU, "Процесор"),
     std::make_pair(DEVICE::DMI, "DMI"),
-    std::make_pair(DEVICE::GPU, "GPU"),
+    std::make_pair(DEVICE::GPU, "Відеокарта"),
     std::make_pair(DEVICE::USB, "USB"),
-    std::make_pair(DEVICE::NETWORK, "NETWORK"),
-    std::make_pair(DEVICE::HARD_DRIVE, "HARD_DRIVE"),
-    std::make_pair(DEVICE::RAM, "RAM"),
-    std::make_pair(DEVICE::MEMORY, "MEMORY"),
-    std::make_pair(DEVICE::PROCESSES, "PROCESSES"),
-    std::make_pair(DEVICE::MODULES, "MODULES"),
-    std::make_pair(DEVICE::RAM_MEMORY, "RAM_MEMORY"),
+    std::make_pair(DEVICE::NETWORK, "Мережева карта"),
+    std::make_pair(DEVICE::HARD_DRIVE, "Жорсткий диск"),
+    std::make_pair(DEVICE::RAM, "Оперативна пам'ять"),
+    std::make_pair(DEVICE::PROCESSES, "Процеси"),
+    std::make_pair(DEVICE::MODULES, "Модулі"),
+    std::make_pair(DEVICE::RAM_MEMORY, "Пам'ять")
 };
-
-static QString getDeviceName(DEVICE dev) {
-    return AllModulesMap[dev];
-}
 
 class MyTreeView : public QTreeWidget {
     Q_OBJECT

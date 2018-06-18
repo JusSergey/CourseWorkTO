@@ -24,7 +24,7 @@ void RAMReadWriteSpeed::preparationAfterTest()
 
 void RAMReadWriteSpeed::setBallForThisTest(ResultTest &test)
 {
-    test.ball = TestAbstract::basicComputeBallOftest(1, test.sec, 80);
+    test.ball = TestAbstract::basicComputeBallOftest(3.F, test.sec, 80);
 }
 
 int64_t RAMReadWriteSpeed::getTestDataSizeInMBytes()

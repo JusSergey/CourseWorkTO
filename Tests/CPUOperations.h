@@ -40,7 +40,9 @@ void CPUOperations<NumberType>::preparationAfterTest()
 template<typename NumberType>
 void CPUOperations<NumberType>::setBallForThisTest(ResultTest &test)
 {
-    test.ball = TestAbstract::basicComputeBallOftest(2.5f, test.sec, 50.f);
+    const float scale = std::is_integral<NumberType>::value ? 1.F : 10.F;
+    test.ball = TestAbstract::basicComputeBallOftest(2.15F, test.sec/scale, 45.F + sizeof(NumberType));
+    std::cout << "ball cpu: " << test.ball << std::endl;
 }
 
 template<typename NumberType>

@@ -38,7 +38,7 @@ using ListStrVects   = list     <StringVector>;
 using TimeType       = int64_t;
 
 // my callback's
-using CallbackColorByPos = function<std::string(int row, int col)>;
+using CallbackColorByPos = function<std::string(int row, int col, string text)>;
 
 // my enum's
 enum class DEVICE : int { UNDEFINED,

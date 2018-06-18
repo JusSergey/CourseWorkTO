@@ -99,6 +99,7 @@ void TestRunner<SubTest>::run() {
     }) );
 
     SubTest::preparationAfterTest();
+    SubTest::setBallForThisTest(_result);
 
     _result.finished = true;
     _condFinishTest.notify_all();

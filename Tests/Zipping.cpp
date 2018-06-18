@@ -30,7 +30,7 @@ void ZipCompress::preparationAfterTest()
 
 void ZipCompress::setBallForThisTest(ResultTest &test)
 {
-    test.ball = TestAbstract::basicComputeBallOftest(7.152F, test.sec, 80.F);
+    test.ball = float(DEFAULT_IN_FILE_SIZE) / (float(DEFAULT_IN_FILE_SIZE) / 100.F) / test.sec * 6.F;
 }
 
 void ZipCompress::generateFile(size_t MBytes)
@@ -66,7 +66,7 @@ void ZipUncompress::preparationAfterTest()
 
 void ZipUncompress::setBallForThisTest(ResultTest &test)
 {
-    test.ball = TestAbstract::basicComputeBallOftest(1.385F, test.sec, 80.F);
+    test.ball = float(DEFAULT_IN_FILE_SIZE) / (float(DEFAULT_IN_FILE_SIZE) / 100.F) / test.sec * 1.1F;
 }
 
 void ZipUncompress::uncompress(const char *filename)

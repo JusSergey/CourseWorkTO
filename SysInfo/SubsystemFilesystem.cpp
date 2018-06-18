@@ -40,16 +40,16 @@ string SubsystemFilesystem::getHTMLCode() const
     static const string FIND_LINE = "\n\n";
     auto posNextChunk = rawData.find(FIND_LINE.c_str());
     HtmlUtils::Table overviewTable = getStructureInfo(rawData);
-    overviewTable.nameTest = "Загальна інформація";
+    overviewTable.nameTable = "Загальна інформація";
     inputDataForHtml.listTables.emplace_back(std::move(overviewTable));
 
     if (posNextChunk != string::npos) {
         string nextChunk = rawData.substr(posNextChunk + FIND_LINE.length());
         auto strList = StringUtil::cropToStrings(nextChunk, '\n');
         HtmlUtils::Table table;
-        table.nameTest = "Інформація про томи";
+        table.nameTable = "Інформація про томи";
         auto headTitle = StringUtil::cropToStrings(strList.front(), ' ');
-        table.headTitle.insert(table.headTitle.end(), headTitle.begin(), headTitle.end());
+        table.fieldsNames.insert(table.fieldsNames.end(), headTitle.begin(), headTitle.end());
         const size_t countColumns = headTitle.size();
         strList.pop_front();
         for (auto strRowList : strList) {

@@ -95,6 +95,7 @@ QLayout *SystemOverview::initButtons()
 
 QLayout *SystemOverview::initTreeWidget()
 {
+    treeView->setMinimumWidth(220);
     auto layout = new QHBoxLayout;
     layout->addWidget(treeView);
 
@@ -141,18 +142,18 @@ void SystemOverview::initConnections()
 
 DEVICE SystemOverview::decodeTextNameItem(const QString &name) const
 {
-    if (name == "CPU") return DEVICE::CPU;
+    if (name == "Процесор") return DEVICE::CPU;
     if (name == "DMI") return DEVICE::DMI;
-    if (name == "RAM") return DEVICE::RAM;
-    if (name == "GPU") return DEVICE::GPU;
+    if (name == "Оперативна пам'ять") return DEVICE::RAM;
+    if (name == "Відеокарта") return DEVICE::GPU;
     if (name == "USB") return DEVICE::USB;
 
-    if (name == "NETWORK") return DEVICE::NETWORK;
+    if (name == "Мережева карта") return DEVICE::NETWORK;
 
-    if (name == "HARD_DRIVE") return DEVICE::HARD_DRIVE;
-    if (name == "PROCESSES")  return DEVICE::PROCESSES;
-    if (name == "MODULES")    return DEVICE::MODULES;
-    if (name == "RAM_MEMORY") return DEVICE::RAM_MEMORY;
+    if (name == "Жорсткий диск") return DEVICE::HARD_DRIVE;
+    if (name == "Процеси")  return DEVICE::PROCESSES;
+    if (name == "Модулі")    return DEVICE::MODULES;
+    if (name == "Пам'ять") return DEVICE::RAM_MEMORY;
 
     return DEVICE::UNDEFINED;
 }
