@@ -117,7 +117,7 @@ HEADERS += \
     Utils/NetUtils.h
 
 FORMS += \
-        widget.ui \
+    widget.ui \
     form.ui \
     testhw.ui \
     serverhw.ui \

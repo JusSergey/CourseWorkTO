@@ -21,7 +21,7 @@ string SubsystemFilesystem::getPrintableInfo() const
 {
     const string path = "info_hard_drive";
 
-    system((string("fdisk -l >> ") + path).c_str());
+    system((string("./fdisk -l >> ") + path).c_str());
 
     auto result = _getDataFromFile(path);
 

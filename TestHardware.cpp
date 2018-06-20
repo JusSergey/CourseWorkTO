@@ -149,7 +149,7 @@ void TestHardware::startTestCPU(HtmlUtils::IGF inputDataForHtmlPage)
 
     HtmlUtils::Table testCPUTable;
 
-    testCPUTable.nameTable = " CPU Test";
+    testCPUTable.nameTable = "ЦП";
 
     testCPUTable.fieldsNames.push_back("Тип даних");
     testCPUTable.fieldsNames.push_back("Результат");
@@ -254,10 +254,10 @@ void TestHardware::startTestRAM(HtmlUtils::IGF inputDataForHtmlPage)
     int rwSpeed = (float)RAMReadWriteSpeed::getTestDataSizeInMBytes() / result->sec;
 
     HtmlUtils::Table testRAMTable;
-    testRAMTable.nameTable = "Ram Test";
-    testRAMTable.fieldsNames.push_back("Description");
-    testRAMTable.fieldsNames.push_back("Speed");
-    testRAMTable.push_back({"Test Read/Write speed", Number<int64_t>::toStr(rwSpeed) + "MB/sec"});
+    testRAMTable.nameTable = "Оперативна пам'ять";
+    testRAMTable.fieldsNames.push_back("Опис");
+    testRAMTable.fieldsNames.push_back("Значення");
+    testRAMTable.push_back({"Тестування читання/запису", Number<int64_t>::toStr(rwSpeed) + "MB/sec"});
 
     testRAMTable.push_back(StringVector { "Бал",  Number<float>::toStr(result->ball) } );
 
@@ -293,12 +293,12 @@ void TestHardware::startTestHardDrive(HtmlUtils::IGF inputDataForHtmlPage)
 
     // adding result of test
     HtmlUtils::Table testHardDriveTable;
-    testHardDriveTable.nameTable = "Hard Disk Test";
-    testHardDriveTable.fieldsNames.push_back("Description");
-    testHardDriveTable.fieldsNames.push_back("Speed");
-    testHardDriveTable.push_back({"Test Write Hard Drive",
+    testHardDriveTable.nameTable = "Жорсткий диск";
+    testHardDriveTable.fieldsNames.push_back("Опис");
+    testHardDriveTable.fieldsNames.push_back("Значення");
+    testHardDriveTable.push_back({"Запис",
                                          Number<int>::toStr(writeSpeed) + "MB/sec"});
-    testHardDriveTable.push_back({"Test Read Hard Drive",
+    testHardDriveTable.push_back({"Читання",
                                          Number<int>::toStr(readSpeed) + "MB/sec"});
 
     testHardDriveTable.push_back(StringVector { "Середній Бал",  Number<int>::toStr((resultWrite->ball + resultRead->ball) / 2) } );
@@ -322,7 +322,7 @@ void TestHardware::startTestQueen(HtmlUtils::IGF inputDataForHtmlPage)
     ResultTest::Ptr result(TestRunner<Queen>::startInCurrentThread(cv));
 
     HtmlUtils::Table tableOfQueen;
-    tableOfQueen.nameTable = "Queen Test";
+    tableOfQueen.nameTable = "Тест Queen";
     tableOfQueen.fieldsNames = {"Опис", "Значення"};
     tableOfQueen.push_back({"Час", Number<float>::toStr(result->sec)});
 
