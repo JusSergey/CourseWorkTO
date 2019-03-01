@@ -1,6 +1,6 @@
 #ifndef FILESENDER_H
 #define FILESENDER_H
-#include "net.h"
+#include "tcpclient.h"
 #include "file.h"
 
 class FileSender : public TCPClient
@@ -20,8 +20,7 @@ public:
 public:
     void asyncSendFile(const std::string &nameOnRemoteMachine,
                        Buffer *ptrToBuffer,
-                       const CallbackFileSendComplete &callback = DEF_CALLBACK_STR,
-                       const CallbackFileSendAbort &callbackAbort = DEF_CALLBACK_STR);
+                       const CallbackFileSendComplete &callback = DEF_CALLBACK_STR);
 
     void asyncSendFile(const std::string &nameOnRemoteMachine,
                        const std::string &pathToFileInHost,

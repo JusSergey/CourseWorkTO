@@ -22,7 +22,7 @@ enum class TypeLongDataMsg : char {
 
 #include <functional>
 #include <string>
-#include "net.h"
+#include "buffer.h"
 
 using CallbackAcceptRecvFile   = std::function<bool(const std::string &filename)>;
 using CallbackFileSendComplete = std::function<void(const std::string &filename)>;

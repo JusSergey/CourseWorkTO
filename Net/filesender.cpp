@@ -8,7 +8,7 @@ FileSender::FileSender(const std::string &ip, u_short port)
     setCallbackRead(_makeCallbackRead());
 }
 
-void FileSender::asyncSendFile(const std::string &nameOnRemoteMachine, Buffer *ptrToBuffer, const CallbackFileSendComplete &callback, const CallbackFileSendAbort &callbackAbort)
+void FileSender::asyncSendFile(const std::string &nameOnRemoteMachine, Buffer *ptrToBuffer, const CallbackFileSendComplete &callback)
 {
     _callbackFileSendComplete = callback;
     if (readerSendFile)
