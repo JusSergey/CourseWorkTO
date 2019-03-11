@@ -1,0 +1,9 @@
+<map id="Subsystem" name="Subsystem">
+<area shape="rect" id="node2" href="$d4/d48/classSubsystemCPU.html" title="SubsystemCPU" alt="" coords="159,5,276,32"/>
+<area shape="rect" id="node3" href="$de/df7/classSubsystemDMI.html" title="SubsystemDMI" alt="" coords="161,56,274,83"/>
+<area shape="rect" id="node4" href="$df/d5f/classSubsystemFilesystem.html" title="SubsystemFilesystem" alt="" coords="141,107,293,133"/>
+<area shape="rect" id="node5" href="$d7/dba/classSubsystemGPU.html" title="SubsystemGPU" alt="" coords="159,157,276,184"/>
+<area shape="rect" id="node6" href="$d3/d00/classSubsystemNet.html" title="SubsystemNet" alt="" coords="163,208,272,235"/>
+<area shape="rect" id="node7" href="$d6/d5a/classSubsystemRAM.html" title="SubsystemRAM" alt="" coords="158,259,277,285"/>
+<area shape="rect" id="node8" href="$d6/d12/classSubsystemUSB.html" title="SubsystemUSB" alt="" coords="159,309,275,336"/>
+</map>

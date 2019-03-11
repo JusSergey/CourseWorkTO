@@ -1,0 +1,5 @@
+<map id="FileSender" name="FileSender">
+<area shape="rect" id="node2" href="$db/daa/classTCPClient.html" title="TCPClient" alt="" coords="9,155,92,181"/>
+<area shape="rect" id="node3" href="$dd/d10/classTCPSocket.html" title="TCPSocket" alt="" coords="5,80,96,107"/>
+<area shape="rect" id="node4" href="$da/df1/structSocketFD.html" title="SocketFD" alt="" coords="10,5,91,32"/>
+</map>

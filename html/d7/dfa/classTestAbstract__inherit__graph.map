@@ -1,0 +1,13 @@
+<map id="TestAbstract" name="TestAbstract">
+<area shape="rect" id="node2" href="$df/d09/classCPU_1_1AbstractCache.html" title="CPU::AbstractCache" alt="" coords="153,31,299,57"/>
+<area shape="rect" id="node5" href="$d9/dcf/classCPU_1_1CPUOperations.html" title="CPU::CPUOperations\l\&lt; NumberType \&gt;" alt="" coords="151,82,301,123"/>
+<area shape="rect" id="node6" href="$dc/d79/classHardDriveSpeedRead.html" title="HardDriveSpeedRead" alt="" coords="151,148,301,175"/>
+<area shape="rect" id="node7" href="$d1/db9/classHardDriveSpeedWrite.html" title="HardDriveSpeedWrite" alt="" coords="151,199,301,225"/>
+<area shape="rect" id="node8" href="$d5/d3f/classQueen.html" title="Queen" alt="" coords="196,249,256,276"/>
+<area shape="rect" id="node9" href="$de/d81/classRAMReadWriteSpeed.html" title="RAMReadWriteSpeed" alt="" coords="151,300,301,327"/>
+<area shape="rect" id="node10" href="$d6/d85/classZipAbstract.html" title="ZipAbstract" alt="" coords="181,351,271,377"/>
+<area shape="rect" id="node3" href="$dc/dc1/classCPU_1_1NoUseCache.html" title="CPU::NoUseCache" alt="" coords="349,5,488,32"/>
+<area shape="rect" id="node4" href="$dd/d0e/classCPU_1_1UseCache.html" title="CPU::UseCache" alt="" coords="358,56,479,83"/>
+<area shape="rect" id="node11" href="$da/dae/classZipCompress.html" title="ZipCompress" alt="" coords="369,325,469,352"/>
+<area shape="rect" id="node12" href="$df/d0b/classZipUncompress.html" title="ZipUncompress" alt="" coords="361,376,476,403"/>
+</map>

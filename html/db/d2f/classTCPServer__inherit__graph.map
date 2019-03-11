@@ -1,0 +1,5 @@
+<map id="TCPServer" name="TCPServer">
+<area shape="rect" id="node4" href="$d3/d99/classFileReceiver.html" title="FileReceiver" alt="" coords="5,229,100,256"/>
+<area shape="rect" id="node2" href="$dd/d10/classTCPSocket.html" title="TCPSocket" alt="" coords="7,80,98,107"/>
+<area shape="rect" id="node3" href="$da/df1/structSocketFD.html" title="SocketFD" alt="" coords="12,5,93,32"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="TCPSocket" name="TCPSocket">
+<area shape="rect" id="node3" href="$db/daa/classTCPClient.html" title="TCPClient" alt="" coords="7,155,90,181"/>
+<area shape="rect" id="node5" href="$d1/d94/classTCPServer.html" title="TCPServer" alt="" coords="116,155,203,181"/>
+<area shape="rect" id="node2" href="$da/df1/structSocketFD.html" title="SocketFD" alt="" coords="63,5,144,32"/>
+<area shape="rect" id="node4" href="$d3/d27/classFileSender.html" title="FileSender" alt="" coords="5,229,89,256"/>
+<area shape="rect" id="node6" href="$d3/d99/classFileReceiver.html" title="FileReceiver" alt="" coords="113,229,208,256"/>
+</map>
